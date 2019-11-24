@@ -21,6 +21,7 @@ export default function getMenus(userId) {
         // {key: 'antDesign', text: 'Ant Design 官网', icon: 'ant-design', url: 'https://ant-design.gitee.io', target: '', order: 2000},
         // {key: 'google', text: '谷歌', icon: 'google', url: 'https://www.google.com', target: '_blank', order: 1200},
         // {key: 'document', text: '文档', icon: 'book', url: 'https://open.vbill.cn/react-admin', target: '_blank', order: 1200},
+        {key: 'home', text:'主页', icon: 'home', path:'/'},
         {key: 'writeEmail', text: '写邮件', icon: 'edit', path: '/writeEmail'},
         {key: 'inbox', text: '收件箱', icon: 'profile', path: '/inbox'},
         {key: 'addressBook', text: '通讯录', icon: 'usergroup-add', path: '/addressBook'},

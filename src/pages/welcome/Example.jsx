@@ -1,10 +1,10 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import ReactEchart from 'echarts-for-react';
 import echarts from 'echarts';
-import { Row, Col, Card } from 'antd';
+import {Row, Col} from 'antd';
 import Map from './Map';
 import Bar from './Bar';
-import { DataBlock } from '@/library/components';
+import {DataBlock} from '@/library/components';
 import PageContent from "@/layouts/page-content";
 import './style.less';
 
@@ -180,38 +180,55 @@ export default class Home extends Component {
                         color="#00dffe"
                         color2='#029cf5'
                         count={users}
-                        tip="用户数"
-                        icon="user"
+                        tip="新增用户"
+                        icon="user-add"
                     />
                     <DataBlock
                         color="#ff8a85"
                         color2='#ff6086'
                         count={read}
-                        tip="节点数"
+                        tip="昨日阅读"
                         icon="area-chart"
                     />
                     <DataBlock
                         color="#fbae52"
                         color2='#fda33a'
                         count={like}
-                        tip="区块高度"
-                        icon="column-height"
+                        tip="新增点赞"
+                        icon="like"
                     />
                     <DataBlock
                         color="#b7a0f9"
                         color2="#7c69ff"
                         count={warning}
-                        tip="交易数"
-                        icon="block"
+                        tip="报警次数"
+                        icon="warning"
+                    />
+                    <DataBlock
+                        color="#4640ff"
+                        color2="#5ba0f8"
+                        count={start}
+                        tip="新增收藏"
+                        icon="star"
                     />
                 </div>
-                <Row style={{ marginTop: 10 }}>
-                    <Col>
+                <Row style={{marginTop: 10}}>
+                    <Col span={12} style={{paddingRight: 10}}>
                         <div style={colStyle}>
-                            <Bar />
+                            <Map/>
+                        </div>
+
+                    </Col>
+                    <Col span={12}>
+                        <div style={colStyle}>
+                            <Bar/>
                         </div>
                     </Col>
                 </Row>
+
+                <div style={{...colStyle, marginTop: 10}}>
+                    <ReactEchart option={this.getBar3Option()}/>
+                </div>
             </PageContent>
         );
     }

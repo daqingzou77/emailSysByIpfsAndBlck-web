@@ -19,6 +19,7 @@ export const commonPaths = [
 * 非脚本抓取的路由，可以在这里编辑，脚本抓取的路由在./src/pages/page-routes.js中
 * */
 export default [
+    { path: '/', component: () => import('../pages/home/index') },
     { path: '/writeEmail', component: () => import('../pages/writeEmail/index') },
     { path: '/inbox', component: () => import('../pages/Inbox/index')},
     { path: '/addressBook', component: () => import('../pages/addressBox/index') },

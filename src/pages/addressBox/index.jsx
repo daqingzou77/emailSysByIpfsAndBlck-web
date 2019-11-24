@@ -13,6 +13,7 @@ import {
 import config from '@/commons/config-hoc';
 import RowEdit from './RoleEdit';
 import UserEditModal from './UserEditModal';
+import moment from 'moment';
 
 @config({
     path: '/users',
@@ -32,12 +33,14 @@ export default class UserCenter extends Component {
     };
 
     columns = [
-        {title: '用户名', dataIndex: 'name', width: 100},
-        {title: '年龄', dataIndex: 'age', width: 100},
-        {title: '工作', dataIndex: 'job', width: 100},
-        {title: '职位', dataIndex: 'position', width: 100},
+        {title: '姓名', dataIndex: 'username', width: 100, align: 'center'},
+        // {title: '年龄', dataIndex: 'age', width: 100},
+        // {title: '工作', dataIndex: 'job', width: 100},
+        // {title:'用户类型', dataIndex: 'userType', width:100, align: 'center'},
+        // {title: '职位', dataIndex: 'position', width: 100, align: 'center'},
+        {title:'创建时间', dataIndex: 'createTime', width:100, align: 'center'},
         {
-            title: '操作', dataIndex: 'operator', width: 100,
+            title: '操作', dataIndex: 'operator', width: 100, align: 'center',
             render: (value, record) => {
                 const {id, name} = record;
                 const items = [
@@ -94,10 +97,11 @@ export default class UserCenter extends Component {
                 const n = index + 1;
                 return {
                     id: n,
-                    name: n,
-                    age: n,
-                    job: n,
-                    position: n,
+                    username: `用户${n}`,
+                    createTime: moment(new Date()).format('YYYY/MM/DD hh:mm:ss'),
+                    // age: n,
+                    // job: n,
+                    // position: ``,
                 };
             });
 
@@ -146,7 +150,7 @@ export default class UserCenter extends Component {
                                     {value: 2, label: 2},
                                 ]}
                             />
-                            {collapsed ? null : (
+                            {/* {collapsed ? null : (
                                 <Fragment>
                                     <FormElement
                                         {...formElementProps}
@@ -160,7 +164,7 @@ export default class UserCenter extends Component {
                                         field="age"
                                     />
                                 </Fragment>
-                            )}
+                            )} */}
                             <FormElement layout>
                                 <Button type="primary" htmlType="submit">添加用户</Button>
                                 <Button onClick={() => this.props.form.resetFields()}>重置</Button>
@@ -173,7 +177,8 @@ export default class UserCenter extends Component {
                     columns={this.columns}
                     dataSource={dataSource}
                     rowKey="id"
-                    pagination={true}
+                    pagination={false}
+                    // pagination={true}
                 />
 
                 {/* <Pagination

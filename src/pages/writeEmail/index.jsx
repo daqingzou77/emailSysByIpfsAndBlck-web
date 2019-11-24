@@ -1,10 +1,13 @@
 import React, { Component } from 'react';
-import { Form, Icon, Card, Row, Col, List, Avatar } from 'antd';
+import { Form, Icon, Card, Row, Col, List, Avatar, Upload, message } from 'antd';
 import {
   FormRow,
   FormElement,
   ToolBar,
 } from "@/library/components";
+import {
+  getPost
+} from '../../services/writeEmail';
 import PageContent from '@/layouts/page-content';
 import config from '@/commons/config-hoc';
 
@@ -19,6 +22,28 @@ const dataSource = [{
 }, {
   title: '631798393'
 }]
+
+
+const uploadProps = {
+  name: 'file',
+  // action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
+  action: 'http://localhost:5000/fileupload',
+  method: 'POST',
+  headers: {
+    authorization: 'authorization-text',
+  },
+  onChange(info) {
+    console.log('info', info);
+    if (info.file.status !== 'uploading') {
+      console.log(info.file, info.fileList);
+    }
+    if (info.file.status === 'done') {
+      message.success(`${info.file.name} file uploaded successfully`);
+    } else if (info.file.status === 'error') {
+      message.error(`${info.file.name} file upload failed.`);
+    }
+  },
+};
 
 @config({
   path: '/writeEmail',
@@ -62,25 +87,24 @@ export default class writeEmail extends Component {
                 <FormElement
                   {...formElement}
                   label='收件人'
-
-                  field='name'
+                  field='Recipient'
                 />
               </FormRow>
               <FormRow>
                 <FormElement
                   {...formElements}
                   label='主题'
-                  field='title'
+                  field='mailTheme'
                 />
               </FormRow>
-
               <FormRow>
                 <FormElement
                   style={{ marginLeft: 60 }}
                 >
-                  <Icon type='link' /> 添加附件
-              <Icon type='picture' style={{ marginLeft: 10 }} /> 上传图片
-           </FormElement>
+                  <Upload {...uploadProps}>
+                    <Icon type='upload' /> 添加附件至IPFS系统
+                  </Upload>
+                </FormElement>
               </FormRow>
               <FormRow>
                 <FormElement
@@ -95,13 +119,14 @@ export default class writeEmail extends Component {
             <ToolBar
               style={{ float: 'left', marginLeft: 60 }}
               items={[
-                { type: 'primary', text: '清空邮件' }
+                { type: 'primary', text: '发送邮件' }
               ]}
             />
             <ToolBar
               style={{ float: 'left', marginLeft: 10 }}
+              onClick={()=>{ this.props.form.resetFields()}}
               items={[
-                { type: 'primary', text: '发送邮件' }
+                { type: '', text: '重置' }
               ]}
             />
           </Col>

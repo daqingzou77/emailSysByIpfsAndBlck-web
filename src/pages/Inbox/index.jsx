@@ -4,6 +4,7 @@ import PageContent from '@/layouts/page-content';
 import {Operator} from "@/library/components";
 import config from '@/commons/config-hoc';
 import InboxDetail from './inboxDetail';
+import moment from 'moment';
 
 
 @config({
@@ -18,11 +19,13 @@ export default class RoleList extends Component {
     };
 
     columns = [
-        {title: '寄件人', dataIndex: 'name', key: 'name'},
-        {title: '邮件主题', dataIndex: 'description', key: 'description', align: 'center'},
+        {title: '寄件人', dataIndex: 'sender', key: 'sender', align: 'center'},
+        {title: '邮件主题', dataIndex: 'mailTheme', key: 'mailTheme', align: 'center'},
+        {title: '邮件时间', dataIndex: 'mailTime', key: 'mailTime', align: 'center'},
         {
-            title: '操作', dataIndex: 'operator', key: 'operator', align: 'center',
-            render: (value, record) => {
+          title: '操作',
+          align: 'center',
+          render: (value, record) => {
                 const {id, name} = record;
                 const items = [
                     {
@@ -40,7 +43,7 @@ export default class RoleList extends Component {
                 ];
 
                 return <Operator items={items}/>
-            },
+          },
         }
     ];
 
@@ -54,7 +57,7 @@ export default class RoleList extends Component {
         const dataSource = [];
         for (let i = 0; i < pageSize; i++) {
             const id = pageSize * (pageNum - 1) + i + 1;
-            dataSource.push({id: `${id}`, name: `用户${id}`, description: `主题${id}`});
+            dataSource.push({id: `${id}`, sender: `用户${id}`, mailTheme: `主题${id}`, mailTime: moment(new Date()).format('YYYY/MM/DD hh:mm:ss')});
         }
 
         this.setState({dataSource});
