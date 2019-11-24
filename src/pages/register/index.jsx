@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { Helmet } from 'react-helmet';
 import { Form, Icon, Input, Button } from 'antd';
 import { setLoginUser } from '@/commons';
-
+import { Link } from 'react-router-dom';
 import config from '@/commons/config-hoc';
 import { ROUTE_BASE_NAME } from '@/router/AppRouter';
 import Banner from './banner/index';
@@ -14,7 +14,7 @@ function hasErrors(fieldsError) {
 
 @Form.create()
 @config({
-    path: '/login',
+    path: '/register',
     noFrame: true,
     noAuth: true,
     keepAlive: false,
@@ -27,20 +27,20 @@ export default class extends Component {
     };
 
     componentDidMount() {
-        const { form: { validateFields, setFieldsValue } } = this.props;
-        // 一开始禁用提交按钮
-        validateFields(() => void 0);
+        //     const {form: {validateFields, setFieldsValue}} = this.props;
+        //     // 一开始禁用提交按钮
+        //     validateFields(() => void 0);
 
-        // 开发时方便测试，填写表单
-        if (process.env.NODE_ENV === 'development') {
-            setFieldsValue({ userName: 'admin', password: '111' });
-        }
+        //     // 开发时方便测试，填写表单
+        //     if (process.env.NODE_ENV === 'development') {
+        //         setFieldsValue({userName: 'admin', password: '111'});
+        //     }
+
         setTimeout(() => this.setState({ isMount: true }), 200);
-
     }
 
     handleGoBack = () => {
-        this.props.history.push('/register');
+        this.props.history.push('/login');
     }
 
     handleSubmit = (e) => {
@@ -84,39 +84,35 @@ export default class extends Component {
 
     render() {
         const {
-            history,
             form: {
                 getFieldDecorator,
                 getFieldsError,
                 getFieldError,
                 isFieldTouched,
-                getFieldsValue
-            }
+            },
+            history,
         } = this.props;
-
-        const { loading, message, isMount } = this.state;
-        const { userName, password } = getFieldsValue();
+        const { loading, message } = this.state;
 
         const userNameError = isFieldTouched('userName') && getFieldError('userName');
         const passwordError = isFieldTouched('password') && getFieldError('password');
 
+        const { isMount } = this.state;
         const formItemStyleName = isMount ? 'form-item active' : 'form-item';
-
 
         return (
             <div styleName="root" className="login-bg">
 
-                <Helmet title="欢迎登陆" />
-                {/*<div style={{position: 'fixed', bottom: -1000}}><Color/></div>*/}
+                <Helmet title="欢迎注册" />
                 <div styleName="left">
                     <Banner />
                 </div>
                 <div styleName="right">
                     <div styleName="box">
-                        <Form onSubmit={this.handleSubmit} className='inputLine'>
-                            {/* <div styleName={formItemStyleName}> */}
-                            <div styleName="header">欢迎登录</div>
-                            {/* </div> */}
+                        <Form onSubmit={this.handleSubmit} className='inputLine' autoComplete="off">
+                            <div styleName={formItemStyleName}>
+                                <div styleName="header">用户注册</div>
+                            </div>
                             <div styleName={formItemStyleName}>
                                 <Form.Item
                                     validateStatus={userNameError ? 'error' : ''}
@@ -126,10 +122,10 @@ export default class extends Component {
                                         rules: [{ required: true, message: '请输入用户名' }],
                                     })(
                                         <Input
+                                            placeholder='用户名'
                                             allowClear
                                             autoFocus
                                             prefix={<Icon type="user" style={{ fontSize: 13 }} />}
-                                            placeholder="用户名"
                                         />
                                     )}
                                 </Form.Item>
@@ -143,8 +139,23 @@ export default class extends Component {
                                         rules: [{ required: true, message: '请输入密码' }],
                                     })(
                                         <Input.Password
+                                            placeholder="用户密码"
                                             prefix={<Icon type="lock" style={{ fontSize: 13 }} />}
-                                            placeholder="密码"
+                                        />
+                                    )}
+                                </Form.Item>
+                            </div>
+                            <div styleName={formItemStyleName}>
+                                <Form.Item
+                                    validateStatus={passwordError ? 'error' : ''}
+                                    help={passwordError || ''}
+                                >
+                                    {getFieldDecorator('password', {
+                                        rules: [{ required: true, message: '请输入确认密码' }],
+                                    })(
+                                        <Input.Password
+                                            placeholder="确认密码"
+                                            prefix={<Icon type="lock" style={{ fontSize: 13 }} />}
                                         />
                                     )}
                                 </Form.Item>
@@ -157,14 +168,16 @@ export default class extends Component {
                                     htmlType="submit"
                                     disabled={hasErrors(getFieldsError())}
                                 >
-                                    登录
+                                    注册
                                 </Button>
                             </div>
                         </Form>
                         <div styleName="error-tip">{message}</div>
+
                         <div styleName="tip">
-                            <span><a style={{ color: 'white' }} onClick={this.handleGoBack}>用户注册</a></span>
+                            <span ><a style={{ color: 'white' }} onClick={this.handleGoBack}>返回登录</a></span>
                         </div>
+
                     </div>
                 </div>
             </div>

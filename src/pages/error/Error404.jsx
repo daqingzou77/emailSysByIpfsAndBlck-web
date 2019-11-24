@@ -40,6 +40,7 @@ export default class Error404 extends Component {
         const {history} = this.props;
         const {time} = this.state;
         return (
+            
             <div styleName="root error404">
                 <div styleName="container">
                     <div styleName="header">
