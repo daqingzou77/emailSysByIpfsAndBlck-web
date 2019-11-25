@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { Helmet } from 'react-helmet';
-import { Form, Icon, Input, Button } from 'antd';
+import { Form, Icon, Input, Button, message } from 'antd';
 import { setLoginUser } from '@/commons';
 
 import config from '@/commons/config-hoc';
@@ -22,19 +22,15 @@ function hasErrors(fieldsError) {
 export default class extends Component {
     state = {
         loading: false,
-        message: '',
+        errMessage: '',
         isMount: true,
     };
 
     componentDidMount() {
-        const { form: { validateFields, setFieldsValue } } = this.props;
+        const { form: { validateFields } } = this.props;
         // 一开始禁用提交按钮
         validateFields(() => void 0);
 
-        // 开发时方便测试，填写表单
-        if (process.env.NODE_ENV === 'development') {
-            setFieldsValue({ userName: 'admin', password: '111' });
-        }
         setTimeout(() => this.setState({ isMount: true }), 200);
 
     }
@@ -47,7 +43,7 @@ export default class extends Component {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
-                this.setState({ loading: true, message: '' });
+                this.setState({ loading: true, errMessage: '' });
 
                 /**
                  * 加密传输用户名密码方案：
@@ -75,7 +71,7 @@ export default class extends Component {
                         window.location.href = lastHref || `${ROUTE_BASE_NAME}/`;
                         // this.props.history.push(lastHref || '/');
                     } else {
-                        this.setState({ message: '用户名或密码错误！' });
+                        this.setState({ errMessage: '用户名或密码错误！' });
                     }
                 }, 1000)
             }
@@ -84,7 +80,6 @@ export default class extends Component {
 
     render() {
         const {
-            history,
             form: {
                 getFieldDecorator,
                 getFieldsError,
@@ -94,7 +89,7 @@ export default class extends Component {
             }
         } = this.props;
 
-        const { loading, message, isMount } = this.state;
+        const { loading, errMessage, isMount } = this.state;
         const { userName, password } = getFieldsValue();
 
         const userNameError = isFieldTouched('userName') && getFieldError('userName');
@@ -113,7 +108,7 @@ export default class extends Component {
                 </div>
                 <div styleName="right">
                     <div styleName="box">
-                        <Form onSubmit={this.handleSubmit} className='inputLine'>
+                        <Form onSubmit={this.handleSubmit} className='inputLine' autoComplete="off">
                             {/* <div styleName={formItemStyleName}> */}
                             <div styleName="header">欢迎登录</div>
                             {/* </div> */}
@@ -161,7 +156,7 @@ export default class extends Component {
                                 </Button>
                             </div>
                         </Form>
-                        <div styleName="error-tip">{message}</div>
+                        <div styleName="error-tip">{errMessage}</div>
                         <div styleName="tip">
                             <span><a style={{ color: 'white' }} onClick={this.handleGoBack}>用户注册</a></span>
                         </div>

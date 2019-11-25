@@ -17,7 +17,7 @@
 <table>
     <tr>
         <td><img src="docs/imgs/login.jpg" alt="登录"/></td>
-        <td><img src="docs/imgs/home.jpg" alt="首页"/></td>
+        <td><img src="docs/imgs/home.jpg" alt="主页"/></td>
     </tr>
     <tr>
         <td><img src="docs/imgs/users.jpg" alt="用户"/></td>

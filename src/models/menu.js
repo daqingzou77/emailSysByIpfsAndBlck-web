@@ -52,7 +52,7 @@ export default {
         let topMenu = {};
 
         // 如果没有匹配到，使用上一次菜单
-        if (!selectedMenu && path !== '/') { // 首页除外
+        if (!selectedMenu && path !== '/') { // 主页除外
             selectedMenu = state.selectedMenu;
         }
 

@@ -10,7 +10,7 @@ import config from '@/commons/config-hoc';
         {
             key: '1',
             path: '/',
-            text: '首页',
+            text: '主页',
             icon: 'home',
         },
         {

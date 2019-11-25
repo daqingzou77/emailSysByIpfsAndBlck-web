@@ -98,7 +98,7 @@ export default class UserCenter extends Component {
                 return {
                     id: n,
                     username: `用户${n}`,
-                    createTime: moment(new Date()).format('YYYY/MM/DD hh:mm:ss'),
+                    createTime: moment(new Date()).format('YYYY-MM-DD hh:mm:ss'),
                     // age: n,
                     // job: n,
                     // position: ``,

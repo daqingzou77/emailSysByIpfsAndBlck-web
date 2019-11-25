@@ -57,7 +57,7 @@ export default class RoleList extends Component {
         const dataSource = [];
         for (let i = 0; i < pageSize; i++) {
             const id = pageSize * (pageNum - 1) + i + 1;
-            dataSource.push({id: `${id}`, sender: `用户${id}`, mailTheme: `主题${id}`, mailTime: moment(new Date()).format('YYYY/MM/DD hh:mm:ss')});
+            dataSource.push({id: `${id}`, sender: `用户${id}`, mailTheme: `主题${id}`, mailTime: moment(new Date()).format('YYYY-MM-DD hh:mm:ss')});
         }
 
         this.setState({dataSource});

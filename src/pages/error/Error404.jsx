@@ -47,7 +47,7 @@ export default class Error404 extends Component {
                         <h3>页面不存在</h3>
                     </div>
                     <p styleName="intro">
-                        跳转到<Link to="/"> 首页 </Link>
+                        跳转到<Link to="/"> 主页 </Link>
                         {history.length >= 2 ? <span>或者返回 <a onClick={this.handleGoBack}>上一步（{time}）</a></span> : null}
                     </p>
                 </div>

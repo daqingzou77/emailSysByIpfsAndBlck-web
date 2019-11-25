@@ -175,7 +175,7 @@ function closeTabByPath(targetPath, tabs) {
 
         tabs.splice(closeTabIndex, 1);
 
-        // 关闭的是最后一个，默认打开首页
+        // 关闭的是最后一个，默认打开主页
         if (!tabs.length) return {tabs: [{path: '/', nextActive: true}]};
 
         return {tabs: [...tabs]};

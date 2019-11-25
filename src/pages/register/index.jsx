@@ -27,14 +27,9 @@ export default class extends Component {
     };
 
     componentDidMount() {
-        //     const {form: {validateFields, setFieldsValue}} = this.props;
-        //     // 一开始禁用提交按钮
-        //     validateFields(() => void 0);
-
-        //     // 开发时方便测试，填写表单
-        //     if (process.env.NODE_ENV === 'development') {
-        //         setFieldsValue({userName: 'admin', password: '111'});
-        //     }
+        const { form: { validateFields } } = this.props;
+        // 一开始禁用提交按钮
+        validateFields(() => void 0);
 
         setTimeout(() => this.setState({ isMount: true }), 200);
     }
@@ -42,6 +37,23 @@ export default class extends Component {
     handleGoBack = () => {
         this.props.history.push('/login');
     }
+
+    validateNextPasswd = (rule, value, callback) => {
+        const { form } = this.props;
+        if (value) {
+            form.validateFields(['confirmPassword'], { force: true })
+        }
+        callback();
+    };
+
+    validatorComfirmPasswd = (rule, value, callback) => {
+        const { form } = this.props;
+        if (value && value !== form.getFieldValue('password')) {
+            callback('两次输入的密码不一致');
+        } else {
+            callback();
+        }
+    };
 
     handleSubmit = (e) => {
         e.preventDefault();
@@ -90,12 +102,12 @@ export default class extends Component {
                 getFieldError,
                 isFieldTouched,
             },
-            history,
         } = this.props;
         const { loading, message } = this.state;
 
         const userNameError = isFieldTouched('userName') && getFieldError('userName');
         const passwordError = isFieldTouched('password') && getFieldError('password');
+        const comfirmPasswdError = isFieldTouched('confirmPassword') && getFieldError('confirmPassword');
 
         const { isMount } = this.state;
         const formItemStyleName = isMount ? 'form-item active' : 'form-item';
@@ -117,6 +129,7 @@ export default class extends Component {
                                 <Form.Item
                                     validateStatus={userNameError ? 'error' : ''}
                                     help={userNameError || ''}
+                                    hasFeedback
                                 >
                                     {getFieldDecorator('userName', {
                                         rules: [{ required: true, message: '请输入用户名' }],
@@ -134,28 +147,41 @@ export default class extends Component {
                                 <Form.Item
                                     validateStatus={passwordError ? 'error' : ''}
                                     help={passwordError || ''}
+                                    hasFeedback
                                 >
                                     {getFieldDecorator('password', {
-                                        rules: [{ required: true, message: '请输入密码' }],
+                                        rules: [{
+                                            required: true, message: '请输入密码'
+                                        }, {
+                                            validator: this.validateNextPasswd
+                                        }
+                                        ],
                                     })(
                                         <Input.Password
                                             placeholder="用户密码"
-                                            prefix={<Icon type="lock" style={{ fontSize: 13 }} />}
+                                            // prefix={<Icon type="lock" style={{ fontSize: 13 }} />}
                                         />
                                     )}
                                 </Form.Item>
                             </div>
                             <div styleName={formItemStyleName}>
                                 <Form.Item
-                                    validateStatus={passwordError ? 'error' : ''}
-                                    help={passwordError || ''}
+                                    validateStatus={comfirmPasswdError ? 'error' : ''}
+                                    help={comfirmPasswdError || ''}
+                                    hasFeedback
                                 >
-                                    {getFieldDecorator('password', {
-                                        rules: [{ required: true, message: '请输入确认密码' }],
+                                    {getFieldDecorator('confirmPassword', {
+                                        rules: [{
+                                            required: true,
+                                            message: '请输入确认密码'
+                                        }, {
+                                            validator: this.validatorComfirmPasswd
+                                        }
+                                        ],
                                     })(
                                         <Input.Password
                                             placeholder="确认密码"
-                                            prefix={<Icon type="lock" style={{ fontSize: 13 }} />}
+                                            // prefix={<Icon type="lock" style={{ fontSize: 13 }} />}
                                         />
                                     )}
                                 </Form.Item>

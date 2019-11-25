@@ -25,6 +25,7 @@ export default function getMenus(userId) {
         {key: 'writeEmail', text: '写邮件', icon: 'edit', path: '/writeEmail'},
         {key: 'inbox', text: '收件箱', icon: 'profile', path: '/inbox'},
         {key: 'addressBook', text: '通讯录', icon: 'usergroup-add', path: '/addressBook'},
+        
         // {key: 'menus', text: '菜单编辑', icon: 'lock', path: '/menu-permission', order: 1000},
         // {key: 'ajax', text: 'ajax请求', icon: 'api', path: '/example/ajax', order: 998},
         // {key: 'user', text: '用户列表', icon: 'user', path: '/users', order: 900},

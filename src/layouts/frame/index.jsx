@@ -141,7 +141,7 @@ export default class FrameTopSideMenu extends Component {
                 breadcrumbs.unshift({
                     key: 'index',
                     icon: 'home',
-                    text: '首页',
+                    text: '主页',
                     path: '/',
                 });
             }

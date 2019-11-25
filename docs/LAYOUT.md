@@ -45,7 +45,7 @@ refreshAllTab()|刷新所有tab页内容（重新渲染）
 closeCurrentTab()|关闭当前tab页
 closeTab(targetPath)|关闭targetPath对应的tab页
 closeOtherTabs(targetPath)|关闭除了targetPath对应的tab页之外的所有tab页
-closeAllTabs()|关闭所有tab页，系统将跳转首页
+closeAllTabs()|关闭所有tab页，系统将跳转主页
 closeLeftTabs(targetPath)|关闭targetPath对应的tab页左侧所有tab页
 closeRightTabs(targetPath)|关闭targetPath对应的tab页右侧所有的tab页
 
