@@ -1,5 +1,5 @@
 import { get } from '../utils/http';
-import { BaseUrl } from '../config/config';
+import { BaseUrl } from './baseUrl';
 
 /**
  *  获取用户数
@@ -10,6 +10,7 @@ import { BaseUrl } from '../config/config';
 export const getUsers = (data, successCb, failCb) => {
   get(`${BaseUrl}/users/getUser`, data, successCb, failCb);
 }
+
 
 /**
  * 获取区块节点数

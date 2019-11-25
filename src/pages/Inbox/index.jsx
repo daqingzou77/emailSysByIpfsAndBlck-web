@@ -5,6 +5,11 @@ import {Operator} from "@/library/components";
 import config from '@/commons/config-hoc';
 import InboxDetail from './inboxDetail';
 import moment from 'moment';
+import {
+  getMailList,
+  findMailById,
+  deleteMailByuser,
+} from '../../services/inbox';
 
 
 @config({
@@ -49,8 +54,10 @@ export default class RoleList extends Component {
 
     componentDidMount() {
         this.handleSearch();
+        this.getMailList();
     }
 
+    // mock数据
     handleSearch = () => {
         const pageNum = 1;
         const pageSize = 10;
@@ -62,7 +69,33 @@ export default class RoleList extends Component {
 
         this.setState({dataSource});
     };
+   
+    // 获取收件箱数据
+    getMailList = () => {
+      getMailList({}, ({ data }) => {
+        console.log('getMailList-data', data);
+      },
+      e => console.log('getMailList-error', e.toString()),
+      )  
+    };
+   
+    // 条件查询邮件详情
+    findMailById = () => {
+      findMailById({}, ({ data }) => {
+        console.log('findMailById-data', data);
+      },
+      e => console.log('findMailById-error', e.toString()),
+      )
+    };
 
+    // 删除邮件
+    deleteMailByuser = () => {
+      deleteMailByuser({}, ({ data }) => {
+        console.log('deleteMailByuser-data', data);
+      },
+      e => console.log('deleteMailByuser-error', e.toString()),
+      )
+    };
 
     handleAdd = () => {
         this.setState({roleId: void 0, visible: true});
@@ -90,7 +123,7 @@ export default class RoleList extends Component {
             columns={this.columns}
             dataSource={dataSource}
             rowKey="id"
-            pagination={false}
+            pagination={true}
           />
           <InboxDetail 
             visible={visible}

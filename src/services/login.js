@@ -1,5 +1,5 @@
 import { post } from '../utils/http';
-import { BaseUrl } from '../../config/config';
+import { BaseUrl } from './baseUrl';
 
 /**
  *  用户登录

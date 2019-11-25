@@ -1,5 +1,5 @@
 import React, {Component, Fragment} from 'react';
-import {Button, Form} from 'antd';
+import {Button, Form, Table} from 'antd';
 import PageContent from '@/layouts/page-content';
 import {
     QueryBar,
@@ -8,12 +8,17 @@ import {
     ToolBar,
     FormRow,
     FormElement,
-    Table,
 } from "@/library/components";
 import config from '@/commons/config-hoc';
 import RowEdit from './RoleEdit';
 import UserEditModal from './UserEditModal';
 import moment from 'moment';
+import {
+    getAddressBooks,
+    getAddressBookByName,
+    deletesAddressBookByName,
+    postAddressBook
+} from '../../services/addressbook'
 
 @config({
     path: '/users',
@@ -42,17 +47,17 @@ export default class UserCenter extends Component {
         {
             title: '操作', dataIndex: 'operator', width: 100, align: 'center',
             render: (value, record) => {
-                const {id, name} = record;
+                const {id, username} = record;
                 const items = [
-                    {
-                        label: '编辑',
-                        onClick: () => this.setState({visible: true, id}),
-                    },
+                    // {
+                    //     label: '编辑',
+                    //     onClick: () => this.setState({visible: true, id}),
+                    // },
                     {
                         label: '删除',
                         color: 'red',
                         confirm: {
-                            title: `您确定删除"${name}"?`,
+                            title: `您确定删除"${username}"?`,
                             onConfirm: () => this.handleSearch(),
                         },
                     }
@@ -65,8 +70,34 @@ export default class UserCenter extends Component {
 
     componentDidMount() {
         this.handleSearch();
-        console.log(this.nameDom);
     }
+    
+    // 获取通讯录信息
+    getAddressBooks = () => {
+        getAddressBooks({}, ({ data }) => {
+            console.log('getAddressBooks-data', data);
+          },
+          e => console.log('getAddressBooks-error', e.toString()),
+        )
+    };
+    
+    // 删除人员
+    deletesAddressBookByName = () => {
+        deletesAddressBookByName({}, ({ data }) => {
+            console.log('deletesAddressBookByName-data', data);
+          },
+          e => console.log('deletesAddressBookByName-error', e.toString()),
+        )
+    };
+    
+    // 添加成员
+    postAddressBook = () => {
+        postAddressBook({}, ({ data }) => {
+            console.log('postAddressBook-data', data);
+          },
+          e => console.log('postAddressBook-error', e.toString()),
+        )
+    };
 
     handleSearch = (e) => {
         e && e.preventDefault();
@@ -92,7 +123,7 @@ export default class UserCenter extends Component {
 
         */
 
-        const dataSource = Array.from({length: 20})
+        const dataSource = Array.from({length: 10})
             .map((item, index) => {
                 const n = index + 1;
                 return {
@@ -132,15 +163,15 @@ export default class UserCenter extends Component {
                     collapsed={collapsed}
                     onCollapsedChange={collapsed => this.setState({collapsed})}
                 >
-                    <Form onSubmit={this.handleSearch}>
+                    <Form onSubmit={this.handleSearch} autoComplete="off">
                         <FormRow>
                             <FormElement
                                 {...formElementProps}
-                                label="名称"
+                                label="用户名"
                                 field="name"
                                 ref={node => this.nameDom = node}
                             />
-                            <FormElement
+                            {/* <FormElement
                                 {...formElementProps}
                                 type="select"
                                 label="职位"
@@ -149,7 +180,7 @@ export default class UserCenter extends Component {
                                     {value: 1, label: 1},
                                     {value: 2, label: 2},
                                 ]}
-                            />
+                            /> */}
                             {/* {collapsed ? null : (
                                 <Fragment>
                                     <FormElement
@@ -177,8 +208,7 @@ export default class UserCenter extends Component {
                     columns={this.columns}
                     dataSource={dataSource}
                     rowKey="id"
-                    pagination={false}
-                    // pagination={true}
+                    pagination={true}
                 />
 
                 {/* <Pagination

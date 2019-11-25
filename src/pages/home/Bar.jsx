@@ -52,7 +52,7 @@ export default class Bar extends Component {
 
   getDataSouce = () => {
     const dataArray = [];
-    for (let i = 0; i < 7; i++) {
+    for (let i = 0; i < 10; i++) {
       const json = Object.assign({}, { sender: 'daqing' }, { theme: '你好吗' }, { mailTime: moment(new Date()).format('YYYY-MM-DD hh:mm:ss') }, { mailHash: 'wrwrewr3r3' })
       dataArray.push(json)
     }

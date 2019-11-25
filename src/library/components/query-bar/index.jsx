@@ -56,13 +56,13 @@ export default class QueryBar extends React.Component {
                 className={classNames(className, 'sx-query-bar', {'with-collapse': showCollapsed})}
                 {...others}
             >
-                {
+                {/* {
                     showCollapsed ? (
                         <a className="sx-query-bar-collapsed" onClick={this.handleCollapsedChange}>
                             <Icon type={collapsed ? 'down' : 'up'}/>
                         </a>
                     ) : null
-                }
+                } */}
                 {this.props.children}
             </div>
         );

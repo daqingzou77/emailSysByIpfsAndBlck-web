@@ -7,6 +7,9 @@ import config from '@/commons/config-hoc';
 import { ROUTE_BASE_NAME } from '@/router/AppRouter';
 import Banner from './banner/index';
 import './style.less'
+import {
+  userLogin
+} from '../../services/login';
 
 function hasErrors(fieldsError) {
     return Object.keys(fieldsError).some(field => fieldsError[field]);

@@ -6,7 +6,8 @@ import {
   ToolBar,
 } from "@/library/components";
 import {
-  getPost
+  submitEmail,
+  getAddressBook
 } from '../../services/writeEmail';
 import PageContent from '@/layouts/page-content';
 import config from '@/commons/config-hoc';
@@ -23,12 +24,12 @@ const dataSource = [{
   title: '631798393'
 }]
 
-
+// 上传文件配置
 const uploadProps = {
   name: 'file',
-  // action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
-  action: 'http://localhost:5000/fileupload',
-  method: 'POST',
+  action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
+  // action: 'http://localhost:5000/fileupload',
+  // method: 'POST',
   headers: {
     authorization: 'authorization-text',
   },
@@ -38,9 +39,9 @@ const uploadProps = {
       console.log(info.file, info.fileList);
     }
     if (info.file.status === 'done') {
-      message.success(`${info.file.name} file uploaded successfully`);
+      message.success(`${info.file.name} 文件上传成功`);
     } else if (info.file.status === 'error') {
-      message.error(`${info.file.name} file upload failed.`);
+      message.error(`${info.file.name} 文件上传失败`);
     }
   },
 };
@@ -59,11 +60,42 @@ export default class writeEmail extends Component {
     };
   }
 
+  componentDidMount() {
+    this.getAddressBook();
+  };
+
+  
+  // 获取通信录人员
+  getAddressBook = () => {
+    getAddressBook({}, ({ data }) => {
+      console.log('getAddressBook-data', data);
+    },
+    e => console.log('getAddressBook-error', e.toString()),
+    )
+  }
+
   handleChange = value => {
     this.setState({
       content: value,
     })
   }
+
+  // 提交邮件
+  handleOnSubmit = e => {
+    e.preventDefault();
+    this.props.form.validateFields((err, values) => {
+      if (!err) {
+        submitEmail({
+  
+        },
+        ({ data }) => {
+          console.log('submitEmail-data', data);
+        },
+        e => console.log('submitEmail-error', e.toString()),
+        )
+      } 
+    }) 
+  };
 
   render() {
     const { form } = this.props;
@@ -82,7 +114,7 @@ export default class writeEmail extends Component {
       <PageContent>
         <Row>
           <Col span={18} >
-            <Form>
+            <Form onSubmit={this.handleOnSubmit}>
               <FormRow>
                 <FormElement
                   {...formElement}

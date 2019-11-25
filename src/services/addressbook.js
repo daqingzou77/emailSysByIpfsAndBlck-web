@@ -1,5 +1,5 @@
 import { get, post, deletes, put } from '../utils/http';
-import { BaseUrl } from '../config/config';
+import { BaseUrl } from './baseUrl';
 
 /**
  * 获取通讯录

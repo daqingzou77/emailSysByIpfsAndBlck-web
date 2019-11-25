@@ -1,5 +1,5 @@
 import { get, deletes } from '../utils/http';
-import { BaseUrl } from '../../config/config';
+import { BaseUrl } from './baseUrl';
 
 /**
  *  获取邮件列表
