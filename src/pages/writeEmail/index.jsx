@@ -27,9 +27,9 @@ const dataSource = [{
 // 上传文件配置
 const uploadProps = {
   name: 'file',
-  action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
+  action: '/add',
   // action: 'http://localhost:5000/fileupload',
-  // method: 'POST',
+  method: 'POST',
   headers: {
     authorization: 'authorization-text',
   },

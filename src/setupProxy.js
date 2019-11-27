@@ -1,15 +1,19 @@
 const proxy = require('http-proxy-middleware');
 
 module.exports = function (app) {
-    app.use(proxy('/api',
+    app.use(proxy('/users',
         {
-            target: 'http://localhost:3000/',
-            pathRewrite: {
-                '^/api': '',
-            },
+            target: 'http://202.193.60.172:4000/',
             changeOrigin: true,
-            secure: false, // 是否验证证书
+            // pathRewrite:{
+             
+            // },
             ws: true, // 启用websocket
         }
     ));
+    app.use(proxy('/add', 
+    {
+        target: 'http://202.193.60.135:8000/',
+        changeOrigin: true,
+    }))
 };

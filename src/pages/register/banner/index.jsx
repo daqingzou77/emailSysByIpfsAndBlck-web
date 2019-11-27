@@ -23,7 +23,7 @@ export default class index extends Component {
                 </div>
                 <div styleName="logo">
                     <img src={logo} alt="图标"/>
-                    <span>区块链电子邮件系统</span>
+                    <span>区块链电子公文系统</span>
                 </div>
             </div>
         );

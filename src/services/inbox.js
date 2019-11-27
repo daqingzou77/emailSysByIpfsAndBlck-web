@@ -1,5 +1,4 @@
 import { get, deletes } from '../utils/http';
-import { BaseUrl } from './baseUrl';
 
 /**
  *  获取邮件列表
@@ -8,7 +7,7 @@ import { BaseUrl } from './baseUrl';
  * @param failCb
  */
 export const getMailList = (data, successCb, failCb) => {
-  get(`${BaseUrl}/inbox/getMailList`, data, successCb, failCb);
+  get(`/inbox/getMailList`, data, successCb, failCb);
 }
 
 /**
@@ -18,7 +17,7 @@ export const getMailList = (data, successCb, failCb) => {
  * @param failCb
  */
 export const findMailById = (data, successCb, failCb) => {
-  get(`${BaseUrl}/inbox/findMailByUser`, data, successCb, failCb);
+  get(`/inbox/findMailByUser`, data, successCb, failCb);
 }
 
 /**
@@ -28,5 +27,5 @@ export const findMailById = (data, successCb, failCb) => {
  * @param failCb
  */
 export const deleteMailByuser = (data, successCb, failCb) => {
-  deletes(`${BaseUrl}/inbox/deleteMailByuser`, data, successCb, failCb);
+  deletes(`/inbox/deleteMailByuser`, data, successCb, failCb);
 }

@@ -3,12 +3,13 @@ import { Helmet } from 'react-helmet';
 import { Form, Icon, Input, Button, message } from 'antd';
 import { setLoginUser } from '@/commons';
 
+
 import config from '@/commons/config-hoc';
 import { ROUTE_BASE_NAME } from '@/router/AppRouter';
 import Banner from './banner/index';
 import './style.less'
 import {
-  userLogin
+    userLogin
 } from '../../services/login';
 
 function hasErrors(fieldsError) {
@@ -43,43 +44,47 @@ export default class extends Component {
     }
 
     handleSubmit = (e) => {
+        const { form } = this.props;
         e.preventDefault();
-        this.props.form.validateFields((err, values) => {
+        form.validateFields((err, values) => {
             if (!err) {
                 this.setState({ loading: true, errMessage: '' });
-
-                /**
-                 * 加密传输用户名密码方案：
-                 *   1 使用https；
-                 *   2 使用非对称加密（RSA），后端提供公钥，前端加密，后端使用私钥解密；
-                 * */
-                // TODO 发送请求进行登录，以下为前端硬编码，模拟请求
+                
                 const { userName, password } = values;
 
                 setTimeout(() => {
                     this.setState({ loading: false });
+                    userLogin({
+                        user_name: userName,
+                        org_name: 'org1',
+                        password: password
+                    },
+                        data => {
+                            console.log('userLogin-data', data);
+                            if (data.success) {
+                                message.success('登录成功');
+                                setLoginUser({
+                                    id: 'tempUserId1',
+                                    name: userName,
+                                })
+                                // // 跳转页面，优先跳转上次登出页面
+                                // const lastHref = window.sessionStorage.getItem('last-href');
 
-                    // 当需要指定登陆用户时，前端可以写死
-                    let userA = userName === 'admin' && password === '111';
-                    let userB = userName === 'admin2' && password === '222';
-                    if (userA || userB) {
-                        setLoginUser({
-                            id: 'tempUserId',
-                            name: 'Admin',
-                        });
-                        // 跳转页面，优先跳转上次登出页面
-                        const lastHref = window.sessionStorage.getItem('last-href');
-
-                        // 强制跳转 进入系统之后，需要一些初始化工作，需要所有的js重新加载
-                        window.location.href = lastHref || `${ROUTE_BASE_NAME}/`;
-                        // this.props.history.push(lastHref || '/');
-                    } else {
-                        this.setState({ errMessage: '用户名或密码错误！' });
-                    }
-                }, 1000)
+                                // // // 强制跳转 进入系统之后，需要一些初始化工作，需要所有的js重新加载
+                                // window.location.href = lastHref || `${ROUTE_BASE_NAME}/`;
+                                this.props.history.push('/');
+                            } else {
+                                this.setState({ errMessage: '用户名或密码错误！' })
+                            }
+                        },
+                        e => console.log('userLogin-error', e.toString()),
+                    )
+                }, 1000);
             }
         });
     };
+
+
 
     render() {
         const {
@@ -88,12 +93,10 @@ export default class extends Component {
                 getFieldsError,
                 getFieldError,
                 isFieldTouched,
-                getFieldsValue
             }
         } = this.props;
 
         const { loading, errMessage, isMount } = this.state;
-        const { userName, password } = getFieldsValue();
 
         const userNameError = isFieldTouched('userName') && getFieldError('userName');
         const passwordError = isFieldTouched('password') && getFieldError('password');
@@ -122,6 +125,7 @@ export default class extends Component {
                                 >
                                     {getFieldDecorator('userName', {
                                         rules: [{ required: true, message: '请输入用户名' }],
+                                        initialValue: '',
                                     })(
                                         <Input
                                             allowClear
@@ -139,6 +143,7 @@ export default class extends Component {
                                 >
                                     {getFieldDecorator('password', {
                                         rules: [{ required: true, message: '请输入密码' }],
+                                        initialValue: '',
                                     })(
                                         <Input.Password
                                             prefix={<Icon type="lock" style={{ fontSize: 13 }} />}

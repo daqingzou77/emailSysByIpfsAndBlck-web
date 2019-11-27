@@ -1,5 +1,4 @@
 import { get } from '../utils/http';
-import { BaseUrl } from './baseUrl';
 
 /**
  *  获取用户数
@@ -8,7 +7,7 @@ import { BaseUrl } from './baseUrl';
  * @param failCb
  */
 export const getUsers = (data, successCb, failCb) => {
-  get(`${BaseUrl}/users/getUser`, data, successCb, failCb);
+  get(`/users/getUser`, data, successCb, failCb);
 }
 
 
@@ -19,7 +18,7 @@ export const getUsers = (data, successCb, failCb) => {
  * @param failCb
  */
 export const getNodes = (data, successCb, failCb) => {
-  get(`${BaseUrl}/users/getNodes`, data, successCb, failCb);
+  get(`/users/getNodes`, data, successCb, failCb);
 }
 
 /**
@@ -29,7 +28,7 @@ export const getNodes = (data, successCb, failCb) => {
  * @param failCb
  */
 export const getBlocksHeight = (data, successCb, failCb) => {
-  get(`${BaseUrl}/users/getBlocksHeight`, data, successCb, failCb);
+  get(`/users/getBlocksHeight`, data, successCb, failCb);
 }
   
 /**
@@ -39,7 +38,7 @@ export const getBlocksHeight = (data, successCb, failCb) => {
  * @param failCb
  */
 export const getTrasactions = (data, successCb, failCb) => {
-  get(`${BaseUrl}/users/getTrasactions`, data, successCb, failCb);
+  get(`/users/getTrasactions`, data, successCb, failCb);
 }
 
 /**
@@ -49,7 +48,7 @@ export const getTrasactions = (data, successCb, failCb) => {
  * @param failCb
  */
 export const getNewTrasactions = (data, successCb, failCb) => {
-  get(`${BaseUrl}/users/getNewTrasactions`, data, successCb, failCb);
+  get(`/users/getNewTrasactions`, data, successCb, failCb);
 }
 
 /**
@@ -59,5 +58,5 @@ export const getNewTrasactions = (data, successCb, failCb) => {
  * @param failCb
  */
 export const getEmailDeatilByHash = (data, successCb, failCb) => {
-  get(`${BaseUrl}/users/getEmailDeatilByHash`, data, successCb, failCb);
+  get(`/users/getEmailDeatilByHash`, data, successCb, failCb);
 }

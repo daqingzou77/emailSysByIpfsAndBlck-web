@@ -42,6 +42,16 @@ export default class Bar extends Component {
         return (
           <a onClick={() => this.handleClickShow(record.fileHash)}>xsfwefadfhiuheuqf2312cewew</a>
         )
+    }, 
+    }, {
+      title: 'CID',
+      dataIndex: 'CID',
+      key: 'CID',
+      align: 'center',
+      render: record => {
+        return (
+          <a onClick={() => this.handleClickShow(record.fileHash)}>xsfwefadfhiuheuqf2312cewew</a>
+        )
       }
     }]
   }

@@ -1,5 +1,4 @@
 import { get, post } from '../utils/http';
-import { BaseUrl } from './baseUrl';
 
 /**
  *  提交邮件
@@ -8,7 +7,7 @@ import { BaseUrl } from './baseUrl';
  * @param failCb
  */
 export const submitEmail = (data, successCb, failCb) => {
-  post(`${BaseUrl}/writeEmail/submitEmail`, data, successCb, failCb);
+  post(`/writeEmail/submitEmail`, data, successCb, failCb);
 }
 
 /**
@@ -18,5 +17,5 @@ export const submitEmail = (data, successCb, failCb) => {
  * @param failCb
  */
 export const getAddressBook = (data, successCb, failCb) => {
-  get(`${BaseUrl}/writeEmail/getAddressBooks`, data, successCb, failCb);
+  get(`/writeEmail/getAddressBooks`, data, successCb, failCb);
 }

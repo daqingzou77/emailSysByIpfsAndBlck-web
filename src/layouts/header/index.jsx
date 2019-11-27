@@ -87,7 +87,7 @@ export default class Header extends Component {
                     <Link to="/">
                         <Logo
                             min={sideCollapsed}
-                            title="区块链电子邮件系统"
+                            title="区块链电子公文系统"
                         />
                     </Link>
                 </div>

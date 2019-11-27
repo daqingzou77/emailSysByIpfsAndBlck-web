@@ -1,5 +1,4 @@
 import { post } from '../utils/http';
-import { BaseUrl } from './baseUrl';
 
 /**
  *  用户登录
@@ -9,7 +8,7 @@ import { BaseUrl } from './baseUrl';
  */
 
 export const userLogin = (data, successCb, failCb) => {
-  post(`${BaseUrl}/user/userLogin`, data, successCb, failCb);
+  post(`/users/login`, data, successCb, failCb);
 }
 
  /**
@@ -20,5 +19,5 @@ export const userLogin = (data, successCb, failCb) => {
  */
 
  export const userRegister = (data, successCb, failCb) => {
-   post(`${BaseUrl}/user/userRegister`, data, successCb, failCb);
+   post(`/users/register`, data, successCb, failCb);
  }

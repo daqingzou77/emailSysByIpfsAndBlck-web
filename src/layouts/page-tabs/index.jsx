@@ -5,6 +5,7 @@ import config from '@/commons/config-hoc';
 import {ContextMenu} from '@/library/components';
 import './style.less';
 
+
 @config({
     router: true,
     connect: state => ({
@@ -113,8 +114,13 @@ export default class PageTabs extends Component {
     render() {
         const {dataSource, width} = this.props;
         const {contextVisible, contextEvent, contextMenu} = this.state;
+        dataSource.map((item, index) => {
+          if (item.path === '/login') {
+            dataSource.splice(index, 1);
+          }
+        })
         const currentTab = dataSource.find(item => item.active);
-
+  
         const tabsBarDataSource = dataSource.map(item => {
             let {text: tabTitle, path, icon} = item;
             let title = tabTitle;

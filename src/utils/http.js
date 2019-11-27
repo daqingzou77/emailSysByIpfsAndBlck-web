@@ -67,12 +67,8 @@ http.adornData = (data = {}, openDefultdata = true, contentType = 'json') => {
 export default http;
 
 function defaultHandleSuccessCallback(data, successCb, failCb) {
-  const { code = -1 } = data;
-  if (code !== 0) {
-    if (typeof failCb === 'function') {
-      failCb({ msg: data.msg });
-    }
-    return;
+  if (typeof failCb === 'function') {
+    failCb(data);
   }
   if (typeof successCb === 'function') {
     successCb(data);
