@@ -1,44 +1,14 @@
 import { get } from '../utils/http';
 
-/**
- *  获取用户数
- * @param data
- * @param successCb
- * @param failCb
- */
-export const getUsers = (data, successCb, failCb) => {
-  get(`/users/getUser`, data, successCb, failCb);
-}
-
 
 /**
- * 获取区块节点数
- * @param data
- * @param successCb
- * @param failCb
+ * 获取显示信息
+ * @param {*} data 
+ * @param {*} successCb 
+ * @param {*} failCb 
  */
-export const getNodes = (data, successCb, failCb) => {
-  get(`/users/getNodes`, data, successCb, failCb);
-}
-
-/**
- * 获取区块高度
- * @param data
- * @param successCb
- * @param failCb
- */
-export const getBlocksHeight = (data, successCb, failCb) => {
-  get(`/users/getBlocksHeight`, data, successCb, failCb);
-}
-  
-/**
- * 获取交易数
- * @param data
- * @param successCb
- * @param failCb
- */
-export const getTrasactions = (data, successCb, failCb) => {
-  get(`/users/getTrasactions`, data, successCb, failCb);
+export const getChainInfo = (data, successCb, failCb) => {
+  get('/chain/info', data, successCb, failCb);
 }
 
 /**

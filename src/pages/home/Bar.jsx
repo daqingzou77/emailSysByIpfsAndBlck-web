@@ -40,7 +40,7 @@ export default class Bar extends Component {
       align: 'center',
       render: record => {
         return (
-          <a onClick={() => this.handleClickShow(record.fileHash)}>xsfwefadfhiuheuqf2312cewew</a>
+          <a onClick={() => this.handleClickShow(record.mailHash)}>xsfwefadfhiuheuqf2312cewew</a>
         )
     }, 
     }, {
@@ -48,11 +48,11 @@ export default class Bar extends Component {
       dataIndex: 'CID',
       key: 'CID',
       align: 'center',
-      render: record => {
-        return (
-          <a onClick={() => this.handleClickShow(record.fileHash)}>xsfwefadfhiuheuqf2312cewew</a>
-        )
-      }
+      // render: record => {
+      //   return (
+      //     <a onClick={() => this.handleClickShow(record.CID)}>xsfwefadfhiuheuqf2312cewew</a>
+      //   )
+      // }
     }]
   }
 

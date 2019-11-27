@@ -66,7 +66,9 @@ export default class extends Component {
                                 setLoginUser({
                                     id: 'tempUserId1',
                                     name: userName,
+                                    token: data.token,
                                 })
+                                console.log('token', data.token);
                                 // // 跳转页面，优先跳转上次登出页面
                                 // const lastHref = window.sessionStorage.getItem('last-href');
 

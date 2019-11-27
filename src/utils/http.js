@@ -1,6 +1,7 @@
 import axios from 'axios';
 import qs from 'qs';
 import merge from 'lodash/merge';
+import { getLoginUser } from '../commons/index';
 
 // import profileConfig from '../../config/app.config';
 
@@ -12,15 +13,29 @@ const http = axios.create({
   },
 });
 
-// const { baseConfig, active } = profileConfig;
-
-// const config = baseConfig[`${active}`];
-
 // api接口请求地址
 // 不再在最底层实现网络请求配置，设置为空
 const baseUrl = '';
 
 http.baseUrl = baseUrl;
+
+let token = '';
+axios.defaults.headers.common['Authorization'] = token;
+
+/**
+ * 添加请求拦截器
+ */
+http.interceptors.request.use(config => {
+   let loginUser = getLoginUser();
+   if (loginUser) {
+     token = loginUser.token;
+   }
+   config.headers.common['Authorization'] = token;
+   return config;
+ }, (err) => {
+   console.log('error', err);
+   return Promise.reject(err);
+ })
 
 /**
  * 请求地址处理

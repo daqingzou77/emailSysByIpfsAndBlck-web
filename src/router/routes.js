@@ -23,5 +23,5 @@ export default [
     { path: '/', component: () => import('../pages/home/index') },
     { path: '/writeEmail', component: () => import('../pages/writeEmail/index') },
     { path: '/inbox', component: () => import('../pages/Inbox/index')},
-    { path: '/addressBook', component: () => import('../pages/addressBox/index') },
+    { path: '/list', component: () => import('../pages/addressBox/index') },
 ].concat(pageRoutes);

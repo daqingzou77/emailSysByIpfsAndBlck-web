@@ -1,5 +1,5 @@
 import React, {Component, Fragment} from 'react';
-import {Button, Form, Table} from 'antd';
+import {Button, Form, Table, message} from 'antd';
 import PageContent from '@/layouts/page-content';
 import {
     QueryBar,
@@ -15,18 +15,21 @@ import UserEditModal from './UserEditModal';
 import moment from 'moment';
 import {
     getAddressBooks,
-    getAddressBookByName,
     deletesAddressBookByName,
-    postAddressBook
+    postAddressBook,
 } from '../../services/addressbook'
+import {
+    getLoginUser
+} from '@/commons/index'
 
 @config({
-    path: '/users',
-    ajax: true,
+    path: '/list',
+    title: {text: '通讯录', icon: 'usergroup'},
+    keepAlive: false,
 })
 @Form.create()
 
-export default class UserCenter extends Component {
+export default class addressBook extends Component {
     state = {
         dataSource: [],     // 表格数据
         total: 0,           // 分页中条数
@@ -38,16 +41,16 @@ export default class UserCenter extends Component {
     };
 
     columns = [
-        {title: '姓名', dataIndex: 'username', width: 100, align: 'center'},
+        {title: '姓名', dataIndex: 'user_name', width: 100, align: 'center'},
         // {title: '年龄', dataIndex: 'age', width: 100},
         // {title: '工作', dataIndex: 'job', width: 100},
         // {title:'用户类型', dataIndex: 'userType', width:100, align: 'center'},
         // {title: '职位', dataIndex: 'position', width: 100, align: 'center'},
-        {title:'创建时间', dataIndex: 'createTime', width:100, align: 'center'},
+        // {title:'创建时间', dataIndex: 'createTime', width:100, align: 'center'},
         {
             title: '操作', dataIndex: 'operator', width: 100, align: 'center',
             render: (value, record) => {
-                const {id, username} = record;
+                const {user_name} = record;
                 const items = [
                     // {
                     //     label: '编辑',
@@ -57,8 +60,8 @@ export default class UserCenter extends Component {
                         label: '删除',
                         color: 'red',
                         confirm: {
-                            title: `您确定删除"${username}"?`,
-                            onConfirm: () => this.handleSearch(),
+                            title: `您确定删除"${user_name}"?`,
+                            onConfirm: () => this.deletesAddressBookByName(user_name),
                         },
                     }
                 ];
@@ -69,75 +72,67 @@ export default class UserCenter extends Component {
     ];
 
     componentDidMount() {
-        this.handleSearch();
+        this.getAddressBooks();
     }
     
     // 获取通讯录信息
     getAddressBooks = () => {
-        getAddressBooks({}, ({ data }) => {
-            console.log('getAddressBooks-data', data);
+        let userName = '';
+        const loginUser = getLoginUser();
+        if (loginUser) {
+           userName = loginUser.userName;
+        }
+        getAddressBooks({
+           userName,
+        }, data  => {
+            if (data !== undefined) {
+                const { contacts_list } = JSON.parse(data.message);
+                console.log('contactList', contacts_list);
+                this.setState({
+                    dataSource: contacts_list,
+                })
+            }
           },
           e => console.log('getAddressBooks-error', e.toString()),
         )
     };
     
     // 删除人员
-    deletesAddressBookByName = () => {
-        deletesAddressBookByName({}, ({ data }) => {
+    deletesAddressBookByName = userName => {
+        deletesAddressBookByName({
+          userName,
+        }, data => {
             console.log('deletesAddressBookByName-data', data);
+            if (data.success) {
+               message.success('删除成功');
+               this.getAddressBooks();
+            }
           },
           e => console.log('deletesAddressBookByName-error', e.toString()),
         )
     };
     
-    // 添加成员
-    postAddressBook = () => {
-        postAddressBook({}, ({ data }) => {
-            console.log('postAddressBook-data', data);
-          },
-          e => console.log('postAddressBook-error', e.toString()),
-        )
-    };
-
-    handleSearch = (e) => {
-        e && e.preventDefault();
-        /*
-        this.props.form.validateFieldsAndScroll((err, values) => {
-            if (err) return;
-
-            const {pageNum, pageSize} = this.state;
-            const params = {
-                ...values,
-                pageNum,
-                pageSize,
-            };
-
-            this.props.ajax.get('/xxx', params)
-                .then(res => {
-                    const dataSource = res?.list || [];
-                    const total = res?.total || 0;
-
-                    this.setState({dataSource, total});
-                });
+    // 添加通讯录成员
+    handleOnSubmit = () => {
+        this.props.form.validateFields((err, values) => {
+            if (!err) {
+                const { name } = values;
+                postAddressBook({
+                   userName: name, 
+                },
+                data => {
+                    console.log('postAddressBook-data', data);
+                    if (data.success) {
+                        message.success('添加成功');
+                        this.getAddressBooks();
+                    }
+                    this.props.form.resetFields();
+                },
+                e => console.log('postAddressBook-error', e.toString()),
+                )
+            }
         });
-
-        */
-
-        const dataSource = Array.from({length: 10})
-            .map((item, index) => {
-                const n = index + 1;
-                return {
-                    id: n,
-                    username: `用户${n}`,
-                    createTime: moment(new Date()).format('YYYY-MM-DD hh:mm:ss'),
-                    // age: n,
-                    // job: n,
-                    // position: ``,
-                };
-            });
-
-        this.setState({dataSource});
-    };
+    }
 
     render() {
         const {
@@ -163,7 +158,7 @@ export default class UserCenter extends Component {
                     collapsed={collapsed}
                     onCollapsedChange={collapsed => this.setState({collapsed})}
                 >
-                    <Form onSubmit={this.handleSearch} autoComplete="off">
+                    <Form autoComplete="off">
                         <FormRow>
                             <FormElement
                                 {...formElementProps}
@@ -197,7 +192,7 @@ export default class UserCenter extends Component {
                                 </Fragment>
                             )} */}
                             <FormElement layout>
-                                <Button type="primary" htmlType="submit">添加用户</Button>
+                                <Button type="primary" onClick={this.handleOnSubmit}>添加用户</Button>
                                 <Button onClick={() => this.props.form.resetFields()}>重置</Button>
                             </FormElement>
                         </FormRow>

@@ -4,13 +4,10 @@ import Bar from './Bar';
 import { DataBlock } from '@/library/components';
 import PageContent from "@/layouts/page-content";
 import {
-    getUsers,
-    getNodes,
-    getBlocksHeight,
-    getTrasactions,
-    getNewTrasactions,
-    getEmailDeatilByHash
-} from '../../services/home'
+  getChainInfo,
+  getNewTrasactions,
+  getEmailDeatilByHash
+} from '@/services/home'
 import './style.less';
 
 export default class Home extends Component {
@@ -38,56 +35,32 @@ export default class Home extends Component {
     // }
 
     state = {
-        users: 868,
-        read: 1869,
-        like: 666,
-        warning: 28,
-        start: 168,
+        users: 0,
+        nodes: 0,
+        heights: 0,
+        transactions: 0,
     };
 
     componentDidMount() {
-        this.getUsers();
-        this.getNodes();
-        this.getBlocksHeight();
-        this.getTrasactions();
+      this.getChainInfo();
     }
 
-    // 获取用户数
-    getUsers = () => {
-        getUsers({}, ({ data }) => {
-            console.log('getUsers-data', data);
-        },
-            e => console.log('getUsers-error', e.toString()),
-        );
-    };
+    // 获取链上信息
+    getChainInfo = () => {
+       getChainInfo({}, data => {
+         console.log('getChainInfo-data', data);
+         const { user_nums, node_nums, block_height, transactions } = JSON.parse(data.message);
+         this.setState({
+            users: user_nums,
+            nodes: node_nums,
+            heights: block_height,
+            transactions,
+         })
+       },
+       e => console.log('getChainInfo-error', e.toString()),
+       )
+    }
 
-    // 获取节点数 
-    getNodes = () => {
-        getNodes({}, ({ data }) => {
-            console.log('getNodes-data', data);
-        },
-            e => console.log('getNodes-error', e.toString()),
-        );
-    };
-
-    // 获取区块高度
-    getBlocksHeight = () => {
-        getBlocksHeight({}, ({ data }) => {
-            console.log('getBlocksHeight-data', data);
-        },
-            e => console.log('getBlocksHeight-error', e.toString()),
-        );
-    };
-
-    // 获取交易数
-    getTrasactions = () => {
-        getTrasactions({}, ({ data }) => {
-            console.log('getTrasactions-data', data);
-        },
-            e => console.log('getTrasactions-error', e.toString()),
-        );
-    };
-    
     // 获取最新几笔交易
     getNewTrasactions = () => {
         getNewTrasactions({}, ({ data }) => {
@@ -109,10 +82,9 @@ export default class Home extends Component {
     render() {
         const {
             users,
-            read,
-            like,
-            warning,
-            start,
+            nodes,
+            heights,
+            transactions,
         } = this.state;
 
         const colStyle = {
@@ -134,21 +106,21 @@ export default class Home extends Component {
                     <DataBlock
                         color="#ff8a85"
                         color2='#ff6086'
-                        count={read}
+                        count={nodes}
                         tip="节点数"
                         icon="area-chart"
                     />
                     <DataBlock
                         color="#fbae52"
                         color2='#fda33a'
-                        count={like}
+                        count={heights}
                         tip="区块高度"
                         icon="column-height"
                     />
                     <DataBlock
                         color="#b7a0f9"
                         color2="#7c69ff"
-                        count={warning}
+                        count={transactions}
                         tip="交易数"
                         icon="block"
                     />

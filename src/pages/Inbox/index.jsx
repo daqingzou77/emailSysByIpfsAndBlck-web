@@ -14,8 +14,10 @@ import {
 
 @config({
   path: '/inbox',
+  title: {text: '收件箱', icon: 'profile'},
+  keepAlive: false,
 })
-export default class RoleList extends Component {
+export default class InBox extends Component {
     state = {
      roleId: void 0,
      visible: false,
@@ -54,7 +56,7 @@ export default class RoleList extends Component {
 
     componentDidMount() {
         this.handleSearch();
-        this.getMailList();
+        // this.getMailList();
     }
 
     // mock数据
