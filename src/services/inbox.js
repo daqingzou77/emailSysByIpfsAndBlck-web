@@ -1,31 +1,31 @@
 import { get, deletes } from '../utils/http';
 
 /**
- *  获取邮件列表
+ *  获取未读邮件列表
  * @param data
  * @param successCb
  * @param failCb
  */
-export const getMailList = (data, successCb, failCb) => {
-  get(`/inbox/getMailList`, data, successCb, failCb);
+export const getReceivingMails = (data, successCb, failCb) => {
+  get(`/mail/receiving`, data, successCb, failCb);
 }
 
 /**
- *  查看邮件详情
- * @param data
- * @param successCb
- * @param failCb
+ * 获取已读邮件列表
+ * @param  data 
+ * @param  successCb 
+ * @param  failCb 
  */
-export const findMailById = (data, successCb, failCb) => {
-  get(`/inbox/findMailByUser`, data, successCb, failCb);
-}
+export const getRecivedMails = (data, successCb, failCb) => {
+  get('/mail/received', data, successCb, failCb);
+} 
 
 /**
- *  删除邮件
+ *  查看邮件
  * @param data
  * @param successCb
  * @param failCb
  */
-export const deleteMailByuser = (data, successCb, failCb) => {
-  deletes(`/inbox/deleteMailByuser`, data, successCb, failCb);
+export const readMail = (data, successCb, failCb) => {
+  get('/mail/read', data, successCb, failCb);
 }

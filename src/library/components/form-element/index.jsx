@@ -141,6 +141,7 @@ class FormElement extends Component {
         label: PropTypes.any,
         labelCol: PropTypes.any,
         required: PropTypes.any,
+        showMessage: PropTypes.any,
         validateStatus: PropTypes.any,
         wrapperCol: PropTypes.any,
 
@@ -180,10 +181,12 @@ class FormElement extends Component {
     }
 
     setStyle = () => {
-        let {labelWidth, label, labelBlock} = this.props;
-        const labelDom = this.container.querySelector('.ant-form-item-label');
+        let {labelWidth, label, labelBlock, showMessage } = this.props;
+        let labelDom = this.container.querySelector('.ant-form-item-label');
 
         if (!label) labelWidth = 0;
+
+        if (showMessage) labelDom = this.container.querySelector('.ant-form-explain');
 
         if (labelDom) {
             if (labelWidth !== void 0) {
@@ -232,6 +235,7 @@ class FormElement extends Component {
             required,
             validateStatus,
             wrapperCol,
+            showMessage,
 
             // decorator属性 展开方便使用
             getValueFromEvent,
@@ -348,7 +352,7 @@ class FormElement extends Component {
         return (
             <div
                 style={{display: type === 'hidden' ? 'none' : 'flex', ...wrapperStyle, ...style}}
-                className="form-element-flex-root"
+                className={["form-element-flex-root"].join('')}
                 ref={node => this.container = node}
             >
 
@@ -360,6 +364,7 @@ class FormElement extends Component {
                     label={formLabel}
                     labelCol={labelCol}
                     required={required}
+                    showMessage={showMessage}
                     validateStatus={validateStatus}
                     wrapperCol={wrapperCol}
                 >

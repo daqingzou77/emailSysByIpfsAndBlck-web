@@ -12,6 +12,7 @@ export function ToolItem(props) {
         const {
             key,
             type = 'primary',
+            loading,
             icon,
             text,
             visible = true,
@@ -32,6 +33,7 @@ export function ToolItem(props) {
             <Button
                 key={itemKey}
                 type={type}
+                loading={loading}
                 disabled={disabled}
                 onClick={onClick}
                 {...others}

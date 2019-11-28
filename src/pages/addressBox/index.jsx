@@ -5,7 +5,6 @@ import {
     QueryBar,
     Pagination,
     Operator,
-    ToolBar,
     FormRow,
     FormElement,
 } from "@/library/components";
@@ -38,6 +37,7 @@ export default class addressBook extends Component {
         collapsed: true,    // 是否收起
         visible: false,     // 添加、修改弹框
         id: null,           // 需要修改的数据id
+        loading: false
     };
 
     columns = [
@@ -117,19 +117,25 @@ export default class addressBook extends Component {
         this.props.form.validateFields((err, values) => {
             if (!err) {
                 const { name } = values;
-                postAddressBook({
-                   userName: name, 
-                },
-                data => {
-                    console.log('postAddressBook-data', data);
-                    if (data.success) {
-                        message.success('添加成功');
-                        this.getAddressBooks();
-                    }
-                    this.props.form.resetFields();
-                },
-                e => console.log('postAddressBook-error', e.toString()),
-                )
+                this.setState({ loading: true })
+                setTimeout(()=> {
+                    postAddressBook({
+                        userName: name, 
+                     },
+                     data => {
+                         console.log('postAddressBook-data', data);
+                         if (data.success) {
+                             message.success('添加成功');
+                             this.getAddressBooks();
+                         }
+                         this.props.form.resetFields();
+                         this.setState({
+                            loading: false,
+                         })
+                     },
+                     e => console.log('postAddressBook-error', e.toString()),
+                     )
+                }, 1000)
             }
         });
     }
@@ -143,6 +149,7 @@ export default class addressBook extends Component {
             dataSource,
             visible,
             id,
+            loading,
         } = this.state;
         const {form} = this.props;
 
@@ -159,11 +166,13 @@ export default class addressBook extends Component {
                     onCollapsedChange={collapsed => this.setState({collapsed})}
                 >
                     <Form autoComplete="off">
-                        <FormRow>
+                        <FormRow >
                             <FormElement
                                 {...formElementProps}
+                                showMessage={true}
                                 label="用户名"
                                 field="name"
+                                required={true}
                                 ref={node => this.nameDom = node}
                             />
                             {/* <FormElement
@@ -192,7 +201,7 @@ export default class addressBook extends Component {
                                 </Fragment>
                             )} */}
                             <FormElement layout>
-                                <Button type="primary" onClick={this.handleOnSubmit}>添加用户</Button>
+                                <Button type="primary" onClick={this.handleOnSubmit} loading={loading}>添加用户</Button>
                                 <Button onClick={() => this.props.form.resetFields()}>重置</Button>
                             </FormElement>
                         </FormRow>

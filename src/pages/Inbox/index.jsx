@@ -1,139 +1,133 @@
-import React, {Component} from 'react';
-import {Table, Modal} from 'antd';
+import React, { Component } from 'react';
+import { Table, Icon, Modal } from 'antd';
 import PageContent from '@/layouts/page-content';
-import {Operator} from "@/library/components";
+import { Operator } from "@/library/components";
 import config from '@/commons/config-hoc';
 import InboxDetail from './inboxDetail';
-import moment from 'moment';
 import {
-  getMailList,
-  findMailById,
-  deleteMailByuser,
+  getReceivingMails,
+  getRecivedMails,
+  readMail,
 } from '../../services/inbox';
 
 
 @config({
   path: '/inbox',
-  title: {text: '收件箱', icon: 'profile'},
+  title: { text: '收件箱', icon: 'profile' },
   keepAlive: false,
 })
 export default class InBox extends Component {
-    state = {
-     roleId: void 0,
-     visible: false,
-     dataSource: [],     // 表格数据
-     id: null,
-    };
+  state = {
+    roleId: void 0,
+    visible: false,
+    dataSource: [],     // 表格数据
+    id: null,
+  };
 
-    columns = [
-        {title: '寄件人', dataIndex: 'sender', key: 'sender', align: 'center'},
-        {title: '邮件主题', dataIndex: 'mailTheme', key: 'mailTheme', align: 'center'},
-        {title: '邮件时间', dataIndex: 'mailTime', key: 'mailTime', align: 'center'},
-        {
-          title: '操作',
-          align: 'center',
-          render: (value, record) => {
-                const {id, name} = record;
-                const items = [
-                    {
-                        label: '查看',
-                        onClick: () => this.handleEdit(id),
-                    },
-                    {
-                        label: '删除',
-                        color: 'red',
-                        confirm: {
-                            title: `您确定删除"${name}"?`,
-                            onConfirm: () => this.handleDelete(id),
-                        },
-                    }
-                ];
-
-                return <Operator items={items}/>
+  columns = [
+    { title: '状态', dataIndex: 'status', key: 'status', align: 'center', 
+      render: (value, record) => {
+        return   <Icon type='alert' style={{ color: record.noRead ?  'red': '' }} /> 
+      }   
+    },
+    { title: '寄件人', dataIndex: 'sender', key: 'sender', align: 'center' },
+    { title: '时间戳', dataIndex: 'timestamp', key: 'timestamp', align: 'center' },
+    { title: 'IPFS文件哈希', dataIndex: 'c_index', key: 'c_inedx', align: 'center' },
+    {
+      title: '操作',
+      align: 'center',
+      render: (value, record) => {
+        const items = [
+          {
+            label: '查看',
+            onClick: () => this.handleOnRead(record.timestamp),
           },
-        }
-    ];
+        ];
 
-    componentDidMount() {
-        this.handleSearch();
-        // this.getMailList();
+        return record.noRead ? <Operator items={items} /> : null
+      },
     }
+  ];
 
-    // mock数据
-    handleSearch = () => {
-        const pageNum = 1;
-        const pageSize = 10;
-        const dataSource = [];
-        for (let i = 0; i < pageSize; i++) {
-            const id = pageSize * (pageNum - 1) + i + 1;
-            dataSource.push({id: `${id}`, sender: `用户${id}`, mailTheme: `主题${id}`, mailTime: moment(new Date()).format('YYYY-MM-DD hh:mm:ss')});
-        }
+  componentDidMount() {
+    this.getReceivingMails()
+  }
 
-        this.setState({dataSource});
-    };
-   
-    // 获取收件箱数据
-    getMailList = () => {
-      getMailList({}, ({ data }) => {
-        console.log('getMailList-data', data);
-      },
-      e => console.log('getMailList-error', e.toString()),
-      )  
-    };
-   
-    // 条件查询邮件详情
-    findMailById = () => {
-      findMailById({}, ({ data }) => {
-        console.log('findMailById-data', data);
-      },
-      e => console.log('findMailById-error', e.toString()),
-      )
-    };
+  // 获取未读文件列表
+  getReceivingMails = () => {
+    getReceivingMails({}, data => {
+      console.log('getReceivingMails-data', data);
+      if (data.success) {
+        const { receiving_list } = JSON.parse(data.message);
+        receiving_list.map(item => {
+          item.noRead = true;
+        })
+        const mailArray = [].concat(receiving_list ? receiving_list : []);
+           // 获取已读文件列表
+           getRecivedMails({}, datas => {
+            if (datas.success) {
+              const { received_mails } = JSON.parse(datas.message);
+              const allMailArray = mailArray.concat(received_mails ? received_mails : []);
+              this.setState({
+                dataSource: allMailArray
+              })
+            }
+          },
+            e => console.log('getRecivedMails-error', e.toString()),
+          )
+      }
+    },
+      e => console.log('getReceivingMails-error', e.toString()),
+    )
+  };
 
-    // 删除邮件
-    deleteMailByuser = () => {
-      deleteMailByuser({}, ({ data }) => {
-        console.log('deleteMailByuser-data', data);
-      },
-      e => console.log('deleteMailByuser-error', e.toString()),
-      )
-    };
+  // 查看未读文件
+  handleOnRead = timestamp => {
+    readMail({
+      timestamp,
+    }, data => {
+       console.log('handleOnRead-data', data);
+       if (data) {
+         if (data.success) {
+          Modal.success({
+            title: '邮件详情',
+            content: JSON.parse(data.message).TxID,
+            onOk: () =>  console.log('onOk'),
+           })
+         } else {
+          Modal.error({
+            title: '操作失败',
+            content: data.message,
+            onOk: () =>  console.log('onOk'),
+           })
+         }
+         this.getReceivingMails();
+       }
+    }, e => console.log('handleOnRead-error', e.toString),
+    )
+  };
 
-    handleAdd = () => {
-        this.setState({roleId: void 0, visible: true});
-    };
-
-    handleDelete = (id) => {
-        // TODO
-    };
-
-    handleEdit = (roleId) => {
-        this.setState({roleId, visible: true});
-    };
-
-    render() {
-      const {
-        dataSource,
-        visible,
-        id,
-        roleId,
-        } = this.state;
-      console.log('render roles');
-      return (
-        <PageContent>
-          <Table
-            columns={this.columns}
-            dataSource={dataSource}
-            rowKey="id"
-            pagination={true}
-          />
-          <InboxDetail 
-            visible={visible}
-            id={id}
-            onOk={() => this.setState({visible: false}, this.handleSearch)}
-            onCancel={() => this.setState({visible: false})}
-          />
-        </PageContent>
-        );
-    }
+  render() {
+    const {
+      dataSource,
+      visible,
+      id,
+    } = this.state;
+    return (
+      <PageContent>
+        <Table
+          columns={this.columns}
+          dataSource={dataSource}
+          rowKey="id"
+          pagination={true}
+        />
+        <InboxDetail
+          visible={visible}
+          id={id}
+          onOk={() => this.setState({ visible: false }, this.handleSearch)}
+          onCancel={() => this.setState({ visible: false })}
+        />
+      </PageContent>
+    );
+  }
 }

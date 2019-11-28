@@ -115,7 +115,7 @@ export default class PageTabs extends Component {
         const {dataSource, width} = this.props;
         const {contextVisible, contextEvent, contextMenu} = this.state;
         dataSource.map((item, index) => {
-          if (item.path === '/login') {
+          if (item.path === '/login' || item.path === '/register') {
             dataSource.splice(index, 1);
           }
         })

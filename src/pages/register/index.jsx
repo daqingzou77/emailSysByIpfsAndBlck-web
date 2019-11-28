@@ -65,7 +65,7 @@ export default class extends Component {
                 const { userName, password } = values;
 
                 setTimeout(() => {
-                    this.setState({ loading: false });
+
                     userRegister({
                         user_name: userName,
                         org_name: 'org1',
@@ -75,14 +75,11 @@ export default class extends Component {
                             console.log('userLogin-data', data);
                             if (data.success) {
                                 message.success('用户注册成功');
-                                setLoginUser({
-                                    id: 'tempUserId1',
-                                    name: userName,
-                                })
                             } else {
                                 this.setState({ errMessage: '当前用户已存在' })
                             }
                             this.props.form.resetFields();
+                            this.setState({ loading: false });
                         },
                         e => console.log('userLogin-error', e.toString()),
                     )
