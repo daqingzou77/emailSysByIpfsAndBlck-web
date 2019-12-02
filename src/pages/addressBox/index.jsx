@@ -23,7 +23,7 @@ import {
 
 @config({
     path: '/list',
-    title: {text: '通讯录', icon: 'usergroup'},
+    title: {text: '通讯录', icon: 'usergroup-add'},
     keepAlive: false,
 })
 @Form.create()

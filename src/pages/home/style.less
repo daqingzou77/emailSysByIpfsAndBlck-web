@@ -6,6 +6,20 @@
 
 }
 
+.showContent {
+    overflow: hidden;
+    height: 680px;
+    margin-top: 10px;
+    background: #F0F2F5;
+}
+
+.showBlocks {
+    overflow: hidden;
+    background: #F0F2F5;
+    display: flex;
+    align-items: center;
+}
+
 .statistics {
     display: flex;
     justify-content: space-around;
@@ -16,5 +30,11 @@
         &:last-child {
             margin-right: 0;
         }
+    }
+}
+
+.blockContent {
+    :global(.ant-modal-content) {
+        width: 600px;
     }
 }

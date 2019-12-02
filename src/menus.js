@@ -23,6 +23,7 @@ export default function getMenus(userId) {
         // {key: 'document', text: '文档', icon: 'book', url: 'https://open.vbill.cn/react-admin', target: '_blank', order: 1200},
         {key: 'home', text:'主页', icon: 'home', path:'/'},
         {key: 'writeEmail', text: '写邮件', icon: 'edit', path: '/writeEmail'},
+        {key: 'hasSent', text: '已发送', icon:'to-top', path: '/hasSent'},
         {key: 'inbox', text: '收件箱', icon: 'profile', path: '/inbox'},
         {key: 'addressBook', text: '通讯录', icon: 'usergroup-add', path: '/list'},
         

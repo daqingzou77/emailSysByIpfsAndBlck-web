@@ -12,13 +12,23 @@ export const getChainInfo = (data, successCb, failCb) => {
 }
 
 /**
+ * 获取区块列表信息
+ * @param data
+ * @param successCb
+ * @param failCb
+ */
+export const getBlockInfos = (data, successCb, failCb) => {
+  get('/chain/blocks', data, successCb, failCb);
+}
+
+/**
  * 获取最新几笔交易数
  * @param data
  * @param successCb
  * @param failCb
  */
 export const getNewTrasactions = (data, successCb, failCb) => {
-  get(`/users/getNewTrasactions`, data, successCb, failCb);
+  get(`/chain/ltxs`, data, successCb, failCb);
 }
 
 /**
@@ -27,6 +37,6 @@ export const getNewTrasactions = (data, successCb, failCb) => {
  * @param successCb
  * @param failCb
  */
-export const getEmailDeatilByHash = (data, successCb, failCb) => {
-  get(`/users/getEmailDeatilByHash`, data, successCb, failCb);
+export const getEmailDeatilByTxId = (data, successCb, failCb) => {
+  get(`/chain/tx`, data, successCb, failCb);
 }

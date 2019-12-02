@@ -35,7 +35,7 @@ export default class HeaderUser extends Component {
 
         const menu = (
             <Menu styleName="menu" theme={theme} selectedKeys={[]} onClick={this.handleMenuClick}>
-                <Item key="modifyPassword"><Icon type="edit"/>修改密码</Item>
+                {/* <Item key="modifyPassword"><Icon type="edit"/>修改密码</Item> */}
                 <Item><Link to="/settings"><Icon type="setting"/>设置</Link></Item>
                 {/* {process.env.NODE_ENV === 'development' ? (
                     <Item><Link to="/menu-permission"><Icon type="lock"/>菜单</Link></Item>

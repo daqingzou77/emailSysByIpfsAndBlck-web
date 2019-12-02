@@ -86,7 +86,7 @@ export default class writeEmail extends Component {
     } else if (file.status === 'error') {
       Modal.error({
         title: '上传失败',
-        content: '文件上传失败',
+        content: '文件上传IPFS系统失败',
       })
     }
     this.setState({
