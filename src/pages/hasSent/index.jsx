@@ -34,10 +34,14 @@ export default class HasSent extends Component {
     querySent({}, data=> {
       console.log('querySent-data', data);
       if (data.success) {
-        const message = JSON.parse(data.message);
-        console.log('sentList', message.sent_list);
+        const sendArray = JSON.parse(data.message);
+        const dataSource = [];
+        sendArray.map(item => {
+          item.value.timestamp = item.value.timestamp.replace('~', ' ');
+          dataSource.push(item.value)
+        })
         this.setState({
-          dataSource: message.sent_list
+          dataSource,
         })
       }
     },

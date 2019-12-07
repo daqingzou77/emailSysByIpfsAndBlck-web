@@ -51,9 +51,16 @@ export default class writeEmail extends Component {
       userName,
     }, data => {
       console.log('getAddressBook-data', data);
-      const { contacts_list } = JSON.parse(data.message);
+      const messageArray = JSON.parse(data.message);
+      console.log('messageArray', messageArray);
+      const dataArray =[];
+      messageArray.map(item => {
+        const { user_name } = item.value; 
+        const items = Object.assign({}, {user_name})
+        dataArray.push(items)
+      })
       this.setState({
-        dataSource: contacts_list,
+        dataSource: dataArray,
       })
     },
       e => console.log('getAddressBook-error', e.toString()),

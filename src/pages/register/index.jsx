@@ -1,9 +1,7 @@
 import React, { Component } from 'react'
 import { Helmet } from 'react-helmet';
-import { Form, Icon, Input, Button, message } from 'antd';
-import { setLoginUser } from '@/commons';
+import { Form, Icon, Input, Button, Modal, Select } from 'antd';
 import config from '@/commons/config-hoc';
-import { ROUTE_BASE_NAME } from '@/router/AppRouter';
 import Banner from './banner/index';
 import './style.less'
 import {
@@ -13,6 +11,8 @@ import {
 function hasErrors(fieldsError) {
     return Object.keys(fieldsError).some(field => fieldsError[field]);
 }
+
+const { Option } = Select;
 
 @Form.create()
 @config({
@@ -33,7 +33,7 @@ export default class extends Component {
         // 一开始禁用提交按钮
         validateFields(() => void 0);
 
-        setTimeout(() => this.setState({ isMount: true }), 200);
+        // setTimeout(() => this.setState({ isMount: true }), 200);
     }
 
     handleGoBack = () => {
@@ -57,6 +57,14 @@ export default class extends Component {
         }
     };
 
+    validatePhone = (rule, value, callback) => {
+        const reg = /^1[3456789]\d{9}$/;
+        if (!reg.test(value)) {
+            callback('请输入正确的手机号码')
+        }
+        callback();
+    }
+
     handleSubmit = (e) => {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
@@ -65,7 +73,6 @@ export default class extends Component {
                 const { userName, password } = values;
 
                 setTimeout(() => {
-
                     userRegister({
                         user_name: userName,
                         org_name: 'org1',
@@ -74,9 +81,15 @@ export default class extends Component {
                         data => {
                             console.log('userLogin-data', data);
                             if (data.success) {
-                                message.success('用户注册成功');
+                                Modal.success({
+                                   title: '注册成功',
+                                   content: data.message
+                                })
                             } else {
-                                this.setState({ errMessage: '当前用户已存在' })
+                                Modal.error({
+                                    title: '注册失败',
+                                    content: data.message
+                                })
                             }
                             this.props.form.resetFields();
                             this.setState({ loading: false });
@@ -102,6 +115,8 @@ export default class extends Component {
         const userNameError = isFieldTouched('userName') && getFieldError('userName');
         const passwordError = isFieldTouched('password') && getFieldError('password');
         const comfirmPasswdError = isFieldTouched('confirmPassword') && getFieldError('confirmPassword');
+        const departError = isFieldTouched('depart') && getFieldError('depart');
+        const phoneError = isFieldTouched('phone') && getFieldError('phone');
 
         const { isMount } = this.state;
         const formItemStyleName = isMount ? 'form-item active' : 'form-item';
@@ -153,7 +168,7 @@ export default class extends Component {
                                     })(
                                         <Input.Password
                                             placeholder="用户密码"
-                                            // prefix={<Icon type="lock" style={{ fontSize: 13 }} />}
+                                            prefix={<Icon type='lock' style={{ fontSize: 13 }} />}
                                         />
                                     )}
                                 </Form.Item>
@@ -175,7 +190,51 @@ export default class extends Component {
                                     })(
                                         <Input.Password
                                             placeholder="确认密码"
-                                            // prefix={<Icon type="lock" style={{ fontSize: 13 }} />}
+                                            prefix={<Icon type='lock' style={{ fontSize: 13 }} />}
+                                        />
+                                    )}
+                                </Form.Item>
+                            </div>
+                            <div styleName={formItemStyleName}>
+                                <Form.Item
+                                    validateStatus={departError ? 'error' : ''}
+                                    help={departError || ''}
+                                    hasFeedback
+                                >
+                                    {getFieldDecorator('depart', {
+                                        rules: [{
+                                            required: true,
+                                            message: '请输入部门'
+                                        }],
+                                    })(
+                                        <Select 
+                                          placeholder='选择部门单位'
+                                        >
+                                           <Option value='镇府'>镇府</Option>
+                                           <Option value='学校'>学校</Option>
+                                           <Option value='其他'>其他</Option>
+                                        </Select>
+                                    )}
+                                </Form.Item>
+                            </div>
+                            <div styleName={formItemStyleName}>
+                                <Form.Item
+                                    validateStatus={phoneError ? 'error' : ''}
+                                    help={phoneError || ''}
+                                    hasFeedback
+                                >
+                                    {getFieldDecorator('phone', {
+                                        rules: [{
+                                            required: true,
+                                            message: '请输入手机号码'
+                                        }, {
+                                            validator: this.validatePhone
+                                        }
+                                        ],
+                                    })(
+                                        <Input
+                                            placeholder="手机号码"
+                                            prefix={<Icon type='phone' style={{ fontSize: 13 }} />}
                                         />
                                     )}
                                 </Form.Item>

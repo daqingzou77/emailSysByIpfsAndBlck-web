@@ -1,5 +1,5 @@
 import React, {Component, Fragment} from 'react';
-import {Button, Form, Table, message} from 'antd';
+import {Button, Form, Table, message, Modal} from 'antd';
 import PageContent from '@/layouts/page-content';
 import {
     QueryBar,
@@ -19,7 +19,8 @@ import {
 } from '../../services/addressbook'
 import {
     getLoginUser
-} from '@/commons/index'
+} from '@/commons/index';
+
 
 @config({
     path: '/list',
@@ -42,26 +43,20 @@ export default class addressBook extends Component {
 
     columns = [
         {title: '姓名', dataIndex: 'user_name', width: 100, align: 'center'},
-        // {title: '年龄', dataIndex: 'age', width: 100},
-        // {title: '工作', dataIndex: 'job', width: 100},
-        // {title:'用户类型', dataIndex: 'userType', width:100, align: 'center'},
-        // {title: '职位', dataIndex: 'position', width: 100, align: 'center'},
-        // {title:'创建时间', dataIndex: 'createTime', width:100, align: 'center'},
+        {title: '部门', dataIndex: 'depart', width: 100, align:'center'},
+        {title: '电话', dataIndex: 'phone', width: 100, align: 'center'},
+        {title: '时间戳', dataIndex: 'Timestamp', width: 100, align: 'center'},
         {
             title: '操作', dataIndex: 'operator', width: 100, align: 'center',
             render: (value, record) => {
-                const {user_name} = record;
+                const {user_name, Timestamp} = record;
                 const items = [
-                    // {
-                    //     label: '编辑',
-                    //     onClick: () => this.setState({visible: true, id}),
-                    // },
                     {
                         label: '删除',
                         color: 'red',
                         confirm: {
                             title: `您确定删除"${user_name}"?`,
-                            onConfirm: () => this.deletesAddressBookByName(user_name),
+                            onConfirm: () => this.deletesAddressBookByName(user_name, Timestamp),
                         },
                     }
                 ];
@@ -85,22 +80,31 @@ export default class addressBook extends Component {
         getAddressBooks({
            userName,
         }, data  => {
+            console.log('data', data);
             if (data !== undefined) {
-                const { contacts_list } = JSON.parse(data.message);
-                console.log('contactList', contacts_list);
-                this.setState({
-                    dataSource: contacts_list,
-                })
+               const messageArray = JSON.parse(data.message);
+               const dataArray = [];
+               messageArray.map(item => {
+                const { user_name, depart, phone, Timestamp } = item.value;
+                const newTime = Timestamp.replace('~', ' ');
+                const items = Object.assign({}, {user_name, depart, phone, Timestamp: newTime});
+                dataArray.push(items)
+               })
+               this.setState({
+                  dataSource: dataArray,
+               })
             }
-          },
+        },
           e => console.log('getAddressBooks-error', e.toString()),
         )
     };
     
     // 删除人员
-    deletesAddressBookByName = userName => {
+    deletesAddressBookByName = (userName, timeStamp) => {
+        const newTime = timeStamp.replace(' ', '~');
         deletesAddressBookByName({
           userName,
+          index: newTime
         }, data => {
             console.log('deletesAddressBookByName-data', data);
             if (data.success) {
@@ -125,8 +129,13 @@ export default class addressBook extends Component {
                      data => {
                          console.log('postAddressBook-data', data);
                          if (data.success) {
-                             message.success('添加成功');
-                             this.getAddressBooks();
+                            message.success('添加成功');
+                            this.getAddressBooks();
+                         } else if (!data.success){
+                            Modal.error({
+                               title: '操作提示',
+                               content: data.message
+                            })
                          }
                          this.props.form.resetFields();
                          this.setState({
@@ -139,12 +148,8 @@ export default class addressBook extends Component {
             }
         });
     }
-
     render() {
         const {
-            total,
-            pageNum,
-            pageSize,
             collapsed,
             dataSource,
             visible,
@@ -175,31 +180,6 @@ export default class addressBook extends Component {
                                 required={true}
                                 ref={node => this.nameDom = node}
                             />
-                            {/* <FormElement
-                                {...formElementProps}
-                                type="select"
-                                label="职位"
-                                field="job"
-                                options={[
-                                    {value: 1, label: 1},
-                                    {value: 2, label: 2},
-                                ]}
-                            /> */}
-                            {/* {collapsed ? null : (
-                                <Fragment>
-                                    <FormElement
-                                        {...formElementProps}
-                                        type="date"
-                                        label="入职时间"
-                                        field="time"
-                                    />
-                                    <FormElement
-                                        {...formElementProps}
-                                        label="年龄"
-                                        field="age"
-                                    />
-                                </Fragment>
-                            )} */}
                             <FormElement layout>
                                 <Button type="primary" onClick={this.handleOnSubmit} loading={loading}>添加用户</Button>
                                 <Button onClick={() => this.props.form.resetFields()}>重置</Button>
@@ -214,26 +194,12 @@ export default class addressBook extends Component {
                     rowKey="id"
                     pagination={true}
                 />
-
-                {/* <Pagination
-                    total={total}
-                    pageNum={pageNum}
-                    pageSize={pageSize}
-                    onPageNumChange={pageNum => this.setState({pageNum}, this.handleSearch)}
-                    onPageSizeChange={pageSize => this.setState({pageSize, pageNum: 1}, this.handleSearch)}
-                /> */}
                 <RowEdit 
                   visible={visible}
                   id={id}
                   onOk={() => this.setState({visible: false}, this.handleSearch)}
                   onCancel={() => this.setState({visible: false})}
                 />
-                {/* <UserEditModal
-                    visible={visible}
-                    id={id}
-                    onOk={() => this.setState({visible: false}, this.handleSearch)}
-                    onCancel={() => this.setState({visible: false})}
-                /> */}
             </PageContent>
         );
     }

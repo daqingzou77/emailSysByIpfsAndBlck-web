@@ -25,7 +25,7 @@ export default class InBox extends Component {
   };
 
   columns = [
-    { title: '状态', dataIndex: 'status', key: 'status', align: 'center', 
+    { title: '文件读取状态', dataIndex: 'status', key: 'status', align: 'center', 
       render: (value, record) => {
         return   <Icon type='alert' style={{ color: record.noRead ?  'red': '' }} /> 
       }   
@@ -39,7 +39,7 @@ export default class InBox extends Component {
       render: (value, record) => {
         const items = [
           {
-            label: '查看',
+            label: '查看文件',
             onClick: () => this.handleOnRead(record.timestamp),
           },
         ];
@@ -58,16 +58,24 @@ export default class InBox extends Component {
     getReceivingMails({}, data => {
       console.log('getReceivingMails-data', data);
       if (data.success) {
-        const { receiving_list } = JSON.parse(data.message);
-        receiving_list.map(item => {
-          item.noRead = true;
+        const parseArray1 = JSON.parse(data.message);
+        const receivingArray = [];
+        parseArray1.map(item => {
+          item.value.noRead = true;
+          item.value.timestamp = item.value.timestamp.replace('~', ' ');
+          receivingArray.push(item.value);
         })
-        const mailArray = [].concat(receiving_list ? receiving_list : []);
+        const mailArray = [].concat(receivingArray ? receivingArray : []);
            // 获取已读文件列表
            getRecivedMails({}, datas => {
             if (datas.success) {
-              const { received_mails } = JSON.parse(datas.message);
-              const allMailArray = mailArray.concat(received_mails ? received_mails : []);
+              const parseArray2 = JSON.parse(datas.message);
+              const receivedArray = [];
+              parseArray2.map(item => {
+                item.value.timestamp = item.value.timestamp.replace('~', ' ');
+                receivedArray.push(item.value)
+              })
+              const allMailArray = mailArray.concat(receivedArray ? receivedArray : []);
               this.setState({
                 dataSource: allMailArray
               })
@@ -83,8 +91,9 @@ export default class InBox extends Component {
 
   // 查看未读文件
   handleOnRead = timestamp => {
+    const newTime = timestamp.replace(' ', '~');
     readMail({
-      timestamp,
+      timestamp:  newTime,
     }, data => {
        console.log('handleOnRead-data', data);
        if (data) {
@@ -107,6 +116,19 @@ export default class InBox extends Component {
     )
   };
 
+  handleClickRow = record => {
+    console.log('record', record);
+    const { timestamp } = record;
+    if (!record.noRead) {
+      Modal.error({
+        title: '操作失败',
+        content: '该文件已读取',
+      });
+      return;
+    }
+    this.handleOnRead(timestamp);
+  }
+
   render() {
     const {
       dataSource,
@@ -120,6 +142,11 @@ export default class InBox extends Component {
           dataSource={dataSource}
           rowKey="id"
           pagination={true}
+          onRow={record => {
+            return {
+              onClick: () => this.handleClickRow(record)
+            }
+          }}
         />
         <InboxDetail
           visible={visible}
