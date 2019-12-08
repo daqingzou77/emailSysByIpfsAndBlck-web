@@ -1,13 +1,10 @@
 import React, { Component } from 'react';
-import { Table, Typography, Modal, Form, Row, Col, Card, Icon } from 'antd';
-import {
-  FormRow,
-  FormElement,
-} from "@/library/components";
+import { Table, Typography, Modal, Form, Row, Col, Card, Icon, Descriptions } from 'antd';
 import {
   getNewTrasactions,
   getEmailDeatilByTxId
 } from '@/services/home';
+import { Base64 } from '@/utils/tool';
 
 
 
@@ -21,6 +18,7 @@ export default class RecentEmails extends Component {
     this.state = {
       dataSource: [],
       showModal: false,
+      writesArray: [],
     };
     this.columns = [{
       title: '所在区块高度',
@@ -88,8 +86,11 @@ export default class RecentEmails extends Component {
       data => {
         console.log('getDetail-data', data);
         if (data.success) {
-          const message = JSON.parse(data.message);
-          console.log('message', message)
+          const datas = JSON.parse(data.message)
+          this.setState({
+            writesArray: datas.writes,
+            showModal: true
+          })
         }
       },
       e => console.log('getDetail-error', e.toString()),
@@ -110,14 +111,15 @@ export default class RecentEmails extends Component {
   };
 
   render() {
-    const { dataSource, showModal } = this.state;
-    const { form } = this.props;
-    const formElements = {
-      form,
-    };
-    const formElement = {
-      form,
-      style: { paddingLeft: 10 }
+    const { dataSource, showModal, writesArray } = this.state;
+    let sentKey, sentValue, receiveKey, receiveValue = '';
+    let sender, senderTimestamp, senderC_index, receiver, receiverTimestamp, receiverC_index =''; 
+    if (writesArray.length > 0) {
+      [sentKey, sentValue, receiveKey, receiveValue] = [writesArray[0].key.replace('~', ' '), Base64.decode(writesArray[0].value), writesArray[1].key.replace('~', ' '), Base64.decode(writesArray[1].value)];
+      sentValue = JSON.parse(sentValue);
+      receiveValue = JSON.parse(receiveValue);
+      [receiver, receiverTimestamp, receiverC_index] = [sentValue.receiver, sentValue.timestamp.replace('~', ' '), sentValue.c_index];
+      [sender, senderTimestamp, senderC_index] = [receiveValue.sender, receiveValue.timestamp.replace('~', ' '), receiveValue.c_index];
     }
 
     return (
@@ -141,33 +143,18 @@ export default class RecentEmails extends Component {
           onOk={this.handleOnOk}
           onCancel={this.handleCancel}
         >
-          <Form>
-            <FormRow>
-              <FormElement
-                label='寄件人'
-                field='sender'
-                {...formElements}
-              >
-              </FormElement>
-            </FormRow>
-            <FormRow>
-              <FormElement
-                label='主题'
-                field="title"
-                {...formElement}
-              >
-              </FormElement>
-            </FormRow>
-            <FormRow>
-              <FormElement
-                {...formElement}
-                label='正文'
-                rows={12}
-                type='textarea'
-                field='content'
-              />
-            </FormRow>
-          </Form>
+          <Descriptions title="写集" bordered>
+            <Descriptions.Item label="key" span={4}>{sentKey}</Descriptions.Item>
+            <Descriptions.Item label="接收人" span={4}>{receiver}</Descriptions.Item>
+            <Descriptions.Item label="时间戳" span={4}>{receiverTimestamp}</Descriptions.Item>
+            <Descriptions.Item label="文件哈希" span={4}>{receiverC_index}</Descriptions.Item>
+          </Descriptions>
+          <Descriptions title="读集" bordered>
+            <Descriptions.Item label="key" span={4}>{receiveKey}</Descriptions.Item>
+            <Descriptions.Item label="发送人" span={4}>{sender}</Descriptions.Item>
+            <Descriptions.Item label="时间戳" span={4}>{senderTimestamp}</Descriptions.Item>
+            <Descriptions.Item label="文件哈希" span={4}>{senderC_index}</Descriptions.Item>
+          </Descriptions>
         </Modal>
       </div>
     );
