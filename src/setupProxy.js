@@ -9,10 +9,29 @@ module.exports = function (app) {
             ws: true, // 启用websocket
         }
         ));
-    })
+    });
+
+    app.use(proxy('/cat', 
+    {
+        target: 'http://202.193.60.135:8000/',
+        changeOrigin: true,
+    }));
+
     app.use(proxy('/add', 
     {
         target: 'http://202.193.60.135:8000/',
         changeOrigin: true,
-    }))
+    })); 
+
+    app.use(proxy('/get', 
+    {
+        target: 'http://localhost:9999/',
+        changeOrigin: true,
+    }));
+
+    app.use(proxy('/post', 
+    {
+        target: 'http://localhost:9999/',
+        changeOrigin: true,
+    }));
 };

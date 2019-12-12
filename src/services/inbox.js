@@ -1,4 +1,5 @@
-import { get, deletes } from '../utils/http';
+import { get, deletes, post } from '../utils/http';
+import { success } from 'agentframework';
 
 /**
  *  获取未读邮件列表
@@ -29,3 +30,10 @@ export const getRecivedMails = (data, successCb, failCb) => {
 export const readMail = (data, successCb, failCb) => {
   get('/mail/read', data, successCb, failCb);
 }
+
+/**
+ * 查看邮件附件
+ */
+// export const catchMail = (data, successCb, failCb) => {
+//   post('/cat', data, successCb, failCb);
+// }

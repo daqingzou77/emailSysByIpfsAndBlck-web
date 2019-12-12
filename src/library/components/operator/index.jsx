@@ -184,7 +184,7 @@ export default class Operator extends Component {
             );
             operators.push(
                 <Dropdown overlay={menu} trigger={moreTrigger}>
-                    <a className="operator-label">
+                    <a className="operator-label" style={{ color: 'red'}}>
                         {moreText}
                     </a>
                 </Dropdown>

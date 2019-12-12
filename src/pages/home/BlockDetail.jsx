@@ -32,24 +32,12 @@ export default class BlockDetail extends Component {
       key: 'prev_hash',
       align: 'center',
     },
-    // {
-    //   title: '区块数据哈希',
-    //   dataIndex: 'data_hash',
-    //   key: 'data_hash',
-    //   align: 'center',
-    // }, 
     {
       title: '区块时间戳',
       dataIndex: 'time_stamp',
       key: 'time_stamp',
       align: 'center',
     },
-      // {
-      //   title: '交易数量',
-      //   dataIndex: 'txs_len',
-      //   key: 'txs_len',
-      //   align: 'center',
-      // }
     ]
   }
 
@@ -59,6 +47,7 @@ export default class BlockDetail extends Component {
 
   getDataSouce = () => {
     getBlockInfos(
+
       {},
       data => {
         console.log('getBlockInfos-data', data);
@@ -68,14 +57,10 @@ export default class BlockDetail extends Component {
           const { blocks_infos } = message;
           const dataSource = [];
           blocks_infos.map((item, index) => {
-            item.time_stamp = item.time_stamp.substring(0, item.time_stamp.indexOf('+') - 1);
-            // item.current_hash = Base64.decode(item.current_hash);
-            // item.prev_hash = Base64.decode(item.prev_hash);
-            // item.data_hash = Base64.decode(item.data_hash);
+            item.time_stamp = item.time_stamp.replace('~', ' ');
             dataSource.push(item);
           });
           const sliceArray = dataSource.slice(0, 5);
-
           console.log('dataSource', dataSource);
           this.setState({
             dataSource,
@@ -111,7 +96,7 @@ export default class BlockDetail extends Component {
   }
 
   render() {
-    const { storeDataSource, dataSource } = this.state;
+    const { storeDataSource } = this.state;
 
     return (
       <div>

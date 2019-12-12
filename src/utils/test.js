@@ -93,6 +93,6 @@
   // var encodedString = Base64.encode(string);
   // console.log(encodedString); // Outputs: "SGVsbG8gV29ybGQh"
   // Decode the String
-  const decodeStrings = "eyJyZWNlaXZlciI6ImRheGl1IiwidGltZXN0YW1wIjoiMjAxOS0xMi0wN34xMzowMjowNy44Nzk4OTA1NjAiLCJzaWduYXR1cmUiOiJRbVNNWjE2c1BORzZFTEZhUDI4TmpYUmRYMWJzOUFtSnJBN0JDUDFyMlY3SktqIiwiY19pbmRleCI6IlFtU01aMTZzUE5HNkVMRmFQMjhOalhSZFgxYnM5QW1KckE3QkNQMXIyVjdKS2oifQ==";
+  const decodeStrings = "eyJ1c2VyX25hbWUiOiJ0ZWRkeSIsImRlcGFydCI6IiIsInBob25lIjoiIn0=";
   var decodedString = Base64.decode(decodeStrings);
   console.log(decodedString);

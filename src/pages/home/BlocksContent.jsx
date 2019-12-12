@@ -82,7 +82,7 @@ export default class BlockContent extends Component {
                     const { blocks_infos } = message;
                     const dataSource = [];
                     blocks_infos.map((item, index) => {
-                        item.time_stamp = item.time_stamp.substring(0, item.time_stamp.indexOf('+') - 1);
+                        item.time_stamp = item.time_stamp.replace('~', ' ');
                         dataSource.push(item);
                     });
                     console.log('dataSource', dataSource);
@@ -159,7 +159,7 @@ export default class BlockContent extends Component {
                 >
                     <p>区块高度：{detail.height}</p>
                     <p>前序区块哈希：{detail.prev_hash}</p>
-                    <p>当前区块哈希：{detail.data_hash}</p>
+                    <p>当前区块哈希：{detail.current_hash}</p>
                     <p>数据哈希：{detail.data_hash}</p>
                     <p>时间戳：{detail.time_stamp}</p>
                     <p>交易数量：{detail.txs_len}</p>
@@ -168,10 +168,6 @@ export default class BlockContent extends Component {
                         <Descriptions.Item label='所在区块' span={3}>{transInfo.position}</Descriptions.Item>
                         <Descriptions.Item label='时间戳' span={3}>{transInfo.time_stamp}</Descriptions.Item>
                     </Descriptions>
-                    {/* <p>交易信息：
-
-                    </p> */}
-                    {/* <p>交易信息：{detail.txs_info}</p> */}
                 </Modal>
             </div>
         );

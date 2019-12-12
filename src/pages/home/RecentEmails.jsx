@@ -5,7 +5,8 @@ import {
   getEmailDeatilByTxId
 } from '@/services/home';
 import { Base64 } from '@/utils/tool';
-
+import { withReducer } from 'recompose';
+import './style.less';
 
 
 const { Title } = Typography;
@@ -94,7 +95,6 @@ export default class RecentEmails extends Component {
         }
       },
       e => console.log('getDetail-error', e.toString()),
-
     );
   }
 
@@ -112,16 +112,21 @@ export default class RecentEmails extends Component {
 
   render() {
     const { dataSource, showModal, writesArray } = this.state;
-    let sentKey, sentValue, receiveKey, receiveValue = '';
-    let sender, senderTimestamp, senderC_index, receiver, receiverTimestamp, receiverC_index =''; 
+    console.log('writesArray', writesArray);
+    let mailDetail = '';
     if (writesArray.length > 0) {
-      [sentKey, sentValue, receiveKey, receiveValue] = [writesArray[0].key.replace('~', ' '), Base64.decode(writesArray[0].value), writesArray[1].key.replace('~', ' '), Base64.decode(writesArray[1].value)];
-      sentValue = JSON.parse(sentValue);
-      receiveValue = JSON.parse(receiveValue);
-      [receiver, receiverTimestamp, receiverC_index] = [sentValue.receiver, sentValue.timestamp.replace('~', ' '), sentValue.c_index];
-      [sender, senderTimestamp, senderC_index] = [receiveValue.sender, receiveValue.timestamp.replace('~', ' '), receiveValue.c_index];
+      const mailDetails = JSON.parse(Base64.decode(writesArray[0].value));
+      const keyStore = [];
+      const valueStore = [];
+      for (let i in mailDetails) {
+        keyStore.push(i);
+        valueStore.push(mailDetails[i])
+      }
+      const span = keyStore.length;
+      mailDetail = valueStore.map((item, index) => {
+        return <Descriptions.Item label={keyStore[index]} span={span}>{item}</Descriptions.Item>
+      })
     }
-
     return (
       <div>
         <Row style={{ marginTop: 10 }}>
@@ -138,23 +143,15 @@ export default class RecentEmails extends Component {
           </Col>
         </Row>
         <Modal
+          styleName="modalShow"
           title="邮件详情"
           visible={showModal}
           onOk={this.handleOnOk}
           onCancel={this.handleCancel}
         >
-          <Descriptions title="写集" bordered>
-            <Descriptions.Item label="key" span={4}>{sentKey}</Descriptions.Item>
-            <Descriptions.Item label="接收人" span={4}>{receiver}</Descriptions.Item>
-            <Descriptions.Item label="时间戳" span={4}>{receiverTimestamp}</Descriptions.Item>
-            <Descriptions.Item label="文件哈希" span={4}>{receiverC_index}</Descriptions.Item>
-          </Descriptions>
-          <Descriptions title="读集" bordered>
-            <Descriptions.Item label="key" span={4}>{receiveKey}</Descriptions.Item>
-            <Descriptions.Item label="发送人" span={4}>{sender}</Descriptions.Item>
-            <Descriptions.Item label="时间戳" span={4}>{senderTimestamp}</Descriptions.Item>
-            <Descriptions.Item label="文件哈希" span={4}>{senderC_index}</Descriptions.Item>
-          </Descriptions>
+          <Descriptions bordered> 
+            {mailDetail}
+          </Descriptions> 
         </Modal>
       </div>
     );

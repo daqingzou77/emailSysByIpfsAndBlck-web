@@ -1,3 +1,9 @@
+import $ from 'jquery';
+
+/**
+ *  Base64 加密函数
+ *  @param string
+ */
 export const Base64 = {
     _keyStr: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",
   encode: function (e) {
@@ -90,4 +96,23 @@ export const Base64 = {
     }
     return t
   }
+}
+
+/**
+ *  附件下载
+ */
+export const downloadFile = (url, downloadFileName) => {
+  const fileName = typeof downloadFile === 'undefined' ? 'file.txt' : downloadFileName;
+  const form = $('<form></form>')
+  .attr('action', url)
+  .attr('method', 'POST')
+  form.append(
+    $('<input/>')
+    .attr('type', 'hidden')
+    .attr('name', 'fileName')
+    .attr('value', fileName)
+  );
+  form.appendTo('body')
+  .submit()
+  .remove();
 }

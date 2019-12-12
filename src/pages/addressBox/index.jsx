@@ -1,5 +1,5 @@
 import React, {Component, Fragment} from 'react';
-import {Button, Form, Table, message, Modal} from 'antd';
+import {Button, Form, Table, message, Modal,Upload, Icon} from 'antd';
 import PageContent from '@/layouts/page-content';
 import {
     QueryBar,
@@ -10,8 +10,6 @@ import {
 } from "@/library/components";
 import config from '@/commons/config-hoc';
 import RowEdit from './RoleEdit';
-import UserEditModal from './UserEditModal';
-import moment from 'moment';
 import {
     getAddressBooks,
     deletesAddressBookByName,
@@ -38,7 +36,7 @@ export default class addressBook extends Component {
         collapsed: true,    // 是否收起
         visible: false,     // 添加、修改弹框
         id: null,           // 需要修改的数据id
-        loading: false
+        loading: false,
     };
 
     columns = [
@@ -163,7 +161,6 @@ export default class addressBook extends Component {
             width: 300,
             style: {paddingLeft: 16},
         };
-        
         return (
             <PageContent>
                 <QueryBar

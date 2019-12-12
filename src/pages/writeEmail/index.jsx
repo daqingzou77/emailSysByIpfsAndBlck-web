@@ -30,7 +30,8 @@ export default class writeEmail extends Component {
     this.state = {
       content: '',
       loading: false,
-      fileHash: '',
+      hash: '',
+      file_name: '',
       fileList: [],
       dataSource: [],
     };
@@ -88,7 +89,8 @@ export default class writeEmail extends Component {
         content: file.response,
       })
       this.setState({
-        file: file.response,
+        hash: file.response,
+        file_name: file.name
       })
     } else if (file.status === 'error') {
       Modal.error({
@@ -100,11 +102,9 @@ export default class writeEmail extends Component {
       fileList
     })
  }
-
-
   // 提交邮件
   handleOnSubmit = e => {
-    const { file } = this.state;
+    const { hash, file_name } = this.state;
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
@@ -114,8 +114,9 @@ export default class writeEmail extends Component {
           submitEmail({
             receiver,
             title,
-            hash: file,
-            text
+            cid: hash,
+            text,
+            file_name,
           },
             data => {
               console.log('submitEmail-data', data);
@@ -161,8 +162,6 @@ export default class writeEmail extends Component {
       },
       onChange: this.handleOnChange
     }
-
-    console.log('loading', loading);
     const formElements = {
       form,
       width: '100%',
