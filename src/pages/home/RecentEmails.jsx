@@ -24,6 +24,7 @@ export default class RecentEmails extends Component {
       annexContent: null,
       annexVisible: false
     };
+
     this.columns = [{
       title: '所在区块高度',
       dataIndex: 'position',
@@ -163,11 +164,13 @@ export default class RecentEmails extends Component {
       }
       const span = keyStore.length;
       mailDetail = valueStore.map((item, index) => {
-        if (keyStore[index] === 'cid') {
-          return item ? <Descriptions.Item label={keyStore[index]} span={span}><a style={{ color: '#029EF5' }} onClick={() => this.handleOnAnnexContent(item)}>{item}</a></Descriptions.Item> : null
+        if (item) {
+          if (keyStore[index] === 'cid') {
+            return item ? <Descriptions.Item key={index} label={keyStore[index]} span={span}><a style={{ color: '#029EF5' }} onClick={() => this.handleOnAnnexContent(item)}>{item}</a></Descriptions.Item> : null
+          }
+          return <Descriptions.Item key={ index} label={keyStore[index]} span={span}>{item}</Descriptions.Item>
         }
-        return <Descriptions.Item label={keyStore[index]} span={span}>{item}</Descriptions.Item>
-      })
+        })
     }
     return (
       <div>

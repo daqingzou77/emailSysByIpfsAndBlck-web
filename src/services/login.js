@@ -8,7 +8,7 @@ import { post } from '../utils/http';
  */
 
 export const userLogin = (data, successCb, failCb) => {
-  post(`/users/login`, data, successCb, failCb);
+  post(`/api/users/login`, data, successCb, failCb);
 }
 
  /**
@@ -19,5 +19,5 @@ export const userLogin = (data, successCb, failCb) => {
  */
 
  export const userRegister = (data, successCb, failCb) => {
-   post(`/users/register`, data, successCb, failCb);
+   post(`/api/users/register`, data, successCb, failCb);
  }

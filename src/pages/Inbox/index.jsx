@@ -93,7 +93,8 @@ export default class InBox extends Component {
           item.value.timestamp = item.value.timestamp.replace('~', ' ');
           receivingArray.push(item.value);
         })
-        const mailArray = [].concat(receivingArray ? receivingArray : []);
+        const reverseReceivingArray = receivingArray.reverse();
+        const mailArray = [].concat(reverseReceivingArray ? reverseReceivingArray : []);
         // 获取已读文件列表
         getRecivedMails({}, datas => {
           if (datas.success) {
@@ -103,7 +104,8 @@ export default class InBox extends Component {
               item.value.timestamp = item.value.timestamp.replace('~', ' ');
               receivedArray.push(item.value)
             })
-            const allMailArray = mailArray.concat(receivedArray ? receivedArray : []);
+            const reverseArray = receivedArray.reverse();
+            const allMailArray = mailArray.concat(reverseArray ? reverseArray : []);
             this.setState({
               dataSource: allMailArray
             })

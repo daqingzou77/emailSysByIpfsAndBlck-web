@@ -1,4 +1,4 @@
-import { get, post } from '../utils/http';
+import { get } from '../utils/http';
 
 /**
  * 获取通讯录
@@ -7,7 +7,7 @@ import { get, post } from '../utils/http';
  * @param failCb
  */
 export const getAddressBooks = (data, successCb, failCb) => {
-  get('/contact/query', data, successCb, failCb);
+  get('/api/contact/query', data, successCb, failCb);
 }
 
 /**
@@ -17,7 +17,7 @@ export const getAddressBooks = (data, successCb, failCb) => {
  * @param failCb
  */
 export const deletesAddressBookByName = (data, successCb, failCb) => {
-  get('/contact/delete', data, successCb, failCb);
+  get('/api/contact/delete', data, successCb, failCb);
 }
 
 /**
@@ -27,5 +27,5 @@ export const deletesAddressBookByName = (data, successCb, failCb) => {
  * @param failCb
  */
 export const postAddressBook = (data, successCb, failCb) => {
-   get('/contact/add', data, successCb, failCb);
+   get('/api/contact/add', data, successCb, failCb);
 }

@@ -8,7 +8,7 @@ import { get, post } from '../utils/http';
  * @param {*} failCb 
  */
 export const getChainInfo = (data, successCb, failCb) => {
-  get('/chain/info', data, successCb, failCb);
+  get('/api/chain/info', data, successCb, failCb);
 }
 
 /**
@@ -18,7 +18,7 @@ export const getChainInfo = (data, successCb, failCb) => {
  * @param failCb
  */
 export const getBlockInfos = (data, successCb, failCb) => {
-  get('/chain/blocks', data, successCb, failCb);
+  get('/api/chain/blocks', data, successCb, failCb);
 }
 
 /**
@@ -28,7 +28,7 @@ export const getBlockInfos = (data, successCb, failCb) => {
  * @param failCb
  */
 export const getNewTrasactions = (data, successCb, failCb) => {
-  get(`/chain/ltxs`, data, successCb, failCb);
+  get(`/api/chain/ltxs`, data, successCb, failCb);
 }
 
 /**
@@ -38,7 +38,7 @@ export const getNewTrasactions = (data, successCb, failCb) => {
  * @param failCb
  */
 export const getEmailDeatilByTxId = (data, successCb, failCb) => {
-  get(`/chain/tx`, data, successCb, failCb);
+  get(`/api/chain/tx`, data, successCb, failCb);
 }
 
 /**

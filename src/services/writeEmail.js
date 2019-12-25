@@ -7,7 +7,7 @@ import { get, post } from '../utils/http';
  * @param failCb
  */
 export const submitEmail = (data, successCb, failCb) => {
-  post('/mail/send', data, successCb, failCb);
+  post('/api/mail/send', data, successCb, failCb);
 }
 
 /**
@@ -17,5 +17,5 @@ export const submitEmail = (data, successCb, failCb) => {
  * @param failCb
  */
 export const getAddressBook = (data, successCb, failCb) => {
-  get('/contact/query', data, successCb, failCb);
+  get('/api/contact/query', data, successCb, failCb);
 }

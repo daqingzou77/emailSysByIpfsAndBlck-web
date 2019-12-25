@@ -8,7 +8,7 @@ import { success } from 'agentframework';
  * @param failCb
  */
 export const getReceivingMails = (data, successCb, failCb) => {
-  get(`/mail/receiving`, data, successCb, failCb);
+  get(`/api/mail/receiving`, data, successCb, failCb);
 }
 
 /**
@@ -18,7 +18,7 @@ export const getReceivingMails = (data, successCb, failCb) => {
  * @param  failCb 
  */
 export const getRecivedMails = (data, successCb, failCb) => {
-  get('/mail/received', data, successCb, failCb);
+  get('/api/mail/received', data, successCb, failCb);
 } 
 
 /**
@@ -28,7 +28,7 @@ export const getRecivedMails = (data, successCb, failCb) => {
  * @param failCb
  */
 export const readMail = (data, successCb, failCb) => {
-  get('/mail/read', data, successCb, failCb);
+  get('/api/mail/read', data, successCb, failCb);
 }
 
 /**
