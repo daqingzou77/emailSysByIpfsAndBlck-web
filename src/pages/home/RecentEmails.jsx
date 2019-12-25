@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import { Table, Typography, Modal, Form, Row, Col, Card, Icon, Descriptions } from 'antd';
 import {
   getNewTrasactions,
-  getEmailDeatilByTxId
+  getEmailDeatilByTxId,
+  catchMail
 } from '@/services/home';
 import { Base64 } from '@/utils/tool';
 import { withReducer } from 'recompose';
@@ -20,6 +21,8 @@ export default class RecentEmails extends Component {
       dataSource: [],
       showModal: false,
       writesArray: [],
+      annexContent: null,
+      annexVisible: false
     };
     this.columns = [{
       title: '所在区块高度',
@@ -33,9 +36,16 @@ export default class RecentEmails extends Component {
       align: 'center',
       render: (value, record) => {
         const that = this;
-        return (
-          <a style={{ color: '#029EF5' }} onClick={() => that.handleOnClick(record.tx_id)}>{record.tx_id}</a>
-        )
+        const { position } = record; 
+        if (position === '1' || position === '2') {
+          return (
+            <a>{record.tx_id}</a>
+          )
+        } else {
+          return (
+            <a style={{ color: '#029EF5' }} onClick={() => that.handleOnClick(record.tx_id)}>{record.tx_id}</a>
+          )
+        }
       }
     }, {
       title: '时间',
@@ -79,7 +89,7 @@ export default class RecentEmails extends Component {
       showModal: true
     })
   };
-
+  
   handleOnClick = txId => {
     getEmailDeatilByTxId({
       tx_id: txId
@@ -88,7 +98,7 @@ export default class RecentEmails extends Component {
         console.log('getDetail-data', data);
         if (data.success) {
           const datas = JSON.parse(data.message)
-          this.setState({
+            this.setState({
             writesArray: datas.writes,
             showModal: true
           })
@@ -110,8 +120,37 @@ export default class RecentEmails extends Component {
     })
   };
 
+  handleOnAnnexContent = val => {
+    this.setState({
+      showModal: false
+    })
+    catchMail({
+      hashStr: val
+    },
+      data => {
+        this.setState({
+          annexVisible: true,
+          annexContent: data,
+        })
+      },
+      e => console.log('catchMial-error', e.toString())
+    );
+  }
+
+  handleAnnexOk = () => {
+    this.setState({
+      annexVisible: false
+    })
+  }
+
+  handleAnnexCancel = () => {
+    this.setState({
+      annexVisible: false
+    })
+  }
+
   render() {
-    const { dataSource, showModal, writesArray } = this.state;
+    const { dataSource, showModal, writesArray, annexContent, annexVisible } = this.state;
     console.log('writesArray', writesArray);
     let mailDetail = '';
     if (writesArray.length > 0) {
@@ -124,6 +163,9 @@ export default class RecentEmails extends Component {
       }
       const span = keyStore.length;
       mailDetail = valueStore.map((item, index) => {
+        if (keyStore[index] === 'cid') {
+          return item ? <Descriptions.Item label={keyStore[index]} span={span}><a style={{ color: '#029EF5' }} onClick={() => this.handleOnAnnexContent(item)}>{item}</a></Descriptions.Item> : null
+        }
         return <Descriptions.Item label={keyStore[index]} span={span}>{item}</Descriptions.Item>
       })
     }
@@ -152,6 +194,15 @@ export default class RecentEmails extends Component {
           <Descriptions bordered> 
             {mailDetail}
           </Descriptions> 
+        </Modal>
+
+        <Modal
+          title="附件详情"
+          visible={annexVisible}
+          onOk={this.handleAnnexOk}
+          onCancel={this.handleAnnexCancel}
+        >
+          {annexContent}
         </Modal>
       </div>
     );

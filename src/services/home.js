@@ -1,4 +1,4 @@
-import { get } from '../utils/http';
+import { get, post } from '../utils/http';
 
 
 /**
@@ -39,4 +39,11 @@ export const getNewTrasactions = (data, successCb, failCb) => {
  */
 export const getEmailDeatilByTxId = (data, successCb, failCb) => {
   get(`/chain/tx`, data, successCb, failCb);
+}
+
+/**
+ * 查看邮件附件
+ */
+export const catchMail = (data, successCb, failCb) => {
+  post('/add/cat', data, successCb, failCb);
 }

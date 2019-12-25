@@ -41,8 +41,6 @@ export default class addressBook extends Component {
 
     columns = [
         {title: '姓名', dataIndex: 'user_name', width: 100, align: 'center'},
-        {title: '部门', dataIndex: 'depart', width: 100, align:'center'},
-        {title: '电话', dataIndex: 'phone', width: 100, align: 'center'},
         {title: '时间戳', dataIndex: 'Timestamp', width: 100, align: 'center'},
         {
             title: '操作', dataIndex: 'operator', width: 100, align: 'center',

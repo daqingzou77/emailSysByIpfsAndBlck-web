@@ -8,6 +8,7 @@ import {
   getReceivingMails,
   getRecivedMails,
   readMail,
+  catchMail,
 } from '../../services/inbox';
 import { getEmailDeatilByTxId } from '../../services/home';
 import { Base64 } from '@/utils/tool';
@@ -23,13 +24,14 @@ export default class InBox extends Component {
     roleId: void 0,
     ModalShow: false,
     visible: false,
+    annexVisible: false,
     writesArray: [],
     dataSource: [],     // 表格数据
     id: null,
+    annexContent: null,
     inboxDetail: {
       cid: "",
       file_name: "",
-      receiver: "",
       sender: "",
       text: "",
       timestamp: "",
@@ -52,9 +54,10 @@ export default class InBox extends Component {
         return (<a onClick={() => this.handleClickRow(record)}>{record.title}</a>)
       }
     },
-    { title: '交易哈希', dataIndex: 'tx_id', key: 'tx_id', align: 'center',
+    {
+      title: '交易哈希', dataIndex: 'tx_id', key: 'tx_id', align: 'center',
       render: (value, record) => {
-      return (<a style={{ color: '#029EF5'}} onClick={() => this.handleClickTxId(record.tx_id)}>{record.tx_id}</a>)
+        return (<a style={{ color: '#029EF5' }} onClick={() => this.handleClickTxId(record.tx_id)}>{record.tx_id}</a>)
       }
     },
     { title: '收件时间', dataIndex: 'timestamp', key: 'timestamp', align: 'center' },
@@ -62,7 +65,7 @@ export default class InBox extends Component {
       title: '操作', dataIndex: 'operator', key: 'operator', align: 'center',
       render: (value, record) => {
         const { timestamp, noRead } = record;
-        return (<a onClick={ () => this.handleOnRead(noRead, timestamp)} style={{ color: record.noRead ? 'red' : ''}}>签收公文</a>)
+        return (<a onClick={() => this.handleOnRead(noRead, timestamp)} style={{ color: record.noRead ? 'red' : '' }}>签收公文</a>)
         // const items = [
         //   {
         //     label: '签收公文',
@@ -149,28 +152,26 @@ export default class InBox extends Component {
     }, 1000)
   };
 
- // 查看交易哈希详情
- handleClickTxId = txId => {
-  getEmailDeatilByTxId({
-    tx_id: txId
-  },
-    data => {
-      console.log('getDetail-data', data);
-      if (data.success) {
-        const datas = JSON.parse(data.message)
-        this.setState({
-          writesArray: datas.writes,
-          visible: true
-        })
-      }
+  // 查看交易哈希详情
+  handleClickTxId = txId => {
+    getEmailDeatilByTxId({
+      tx_id: txId
     },
-    e => console.log('getDetail-error', e.toString()),
-  );
- }
-
+      data => {
+        console.log('getDetail-data', data);
+        if (data.success) {
+          const datas = JSON.parse(data.message)
+          this.setState({
+            writesArray: datas.writes,
+            visible: true
+          })
+        }
+      },
+      e => console.log('getDetail-error', e.toString()),
+    );
+  }
 
   handleClickRow = record => {
-    console.log('record', record);
     if (record) {
       this.setState({
         ModalShow: true,
@@ -204,14 +205,50 @@ export default class InBox extends Component {
   };
 
   handleClick = cid => {
-    axios.post('/post', {
-      hashStr: cid
+    this.setState({
+      ModalShow: false,
     })
-      .then(data => {
-        console.log('catchData', data)
-      })
-      .catch(e => console.log('catch-error', e.toString));
+    catchMail({
+      hashStr: cid
+    },
+      data => {
+        this.setState({
+          annexVisible: true,
+          annexContent: data,
+        })
+      },
+      e => console.log('catchMial-error', e.toString())
+    );
   };
+
+  handleOnAnnexContent = val => {
+    this.setState({
+      visible: false,
+    })
+    catchMail({
+      hashStr: val
+    },
+      data => {
+        this.setState({
+          annexVisible: true,
+          annexContent: data,
+        })
+      },
+      e => console.log('catchMial-error', e.toString())
+    );
+  }
+
+  handleOnAnnexVisible = () => {
+    this.setState({
+      annexVisible: false
+    })
+  }
+
+  handleOnAnnexCancel = () => {
+    this.setState({
+      annexVisible: false
+    })
+  }
 
   render() {
     const {
@@ -219,7 +256,9 @@ export default class InBox extends Component {
       inboxDetail,
       ModalShow,
       visible,
-      writesArray
+      writesArray,
+      annexVisible,
+      annexContent
     } = this.state;
     let mailDetail = '';
     if (writesArray.length > 0) {
@@ -233,7 +272,7 @@ export default class InBox extends Component {
       const span = keyStore.length;
       mailDetail = valueStore.map((item, index) => {
         if (keyStore[index] === 'cid') {
-        return item ? <Descriptions.Item label={keyStore[index]} span={span}><a style={{ color: '#029EF5' }}>{item}</a></Descriptions.Item> : null
+          return item ? <Descriptions.Item label={keyStore[index]} span={span}><a style={{ color: '#029EF5' }} onClick={() => this.handleOnAnnexContent(item)}>{item}</a></Descriptions.Item> : null
         }
         return item ? <Descriptions.Item label={keyStore[index]} span={span}>{item}</Descriptions.Item> : null
       })
@@ -258,7 +297,6 @@ export default class InBox extends Component {
           <Descriptions bordered>
             {inboxDetail.sender ? <Descriptions.Item label="发送人" span={6}>{inboxDetail.sender}</Descriptions.Item> : null}
             {inboxDetail.title ? <Descriptions.Item label="主题" span={6}>{inboxDetail.title}</Descriptions.Item> : null}
-            {inboxDetail.text ? <Descriptions.Item label="正文" span={6}>{inboxDetail.text}</Descriptions.Item> : null}
             {inboxDetail.tx_id ? <Descriptions.Item label="公文哈希" span={6}>{inboxDetail.tx_id}</Descriptions.Item> : null}
             {inboxDetail.file_name ? <Descriptions.Item label="附件名" span={6}>{inboxDetail.file_name}</Descriptions.Item> : null}
             {inboxDetail.cid ? <Descriptions.Item label="cid" span={6}><a style={{ color: '#029EF5' }} onClick={() => this.handleClick(inboxDetail.cid)}>{inboxDetail.cid}</a></Descriptions.Item> : null}
@@ -269,12 +307,21 @@ export default class InBox extends Component {
           styleName="modalCotent"
           title="交易详情"
           visible={visible}
+          okText="确定"
           onOk={this.handleModalOk}
           onCancel={this.handleModalCancel}
         >
-          <Descriptions bordered> 
+          <Descriptions bordered>
             {mailDetail}
-          </Descriptions> 
+          </Descriptions>
+        </Modal>
+        <Modal
+          title="附件详情"
+          visible={annexVisible}
+          onOk={this.handleOnAnnexVisible}
+          onCancel={this.handleOnAnnexCancel}
+        >
+          {annexContent}
         </Modal>
       </PageContent>
     );
