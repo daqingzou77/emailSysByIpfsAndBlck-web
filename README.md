@@ -1,4 +1,4 @@
-# React Admin
+# 基于区块链和IPFS的电子公文系统
 基于[React](https://reactjs.org)、[Ant Design](https://ant.design/)的管理系统架构。
 
 实现集成区块链分布式存储和ipfs寻址查询的电子公文系统
