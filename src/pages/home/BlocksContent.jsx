@@ -141,7 +141,7 @@ export default class BlockContent extends Component {
                         <Card
                             title={<Title level={4}><Icon type='mail' />&nbsp;区块详情</Title>}
                             extra={<CheckableTag checked onChange={this.showAllBlocks}>返回</CheckableTag>}
-                            style={{ height: 600 }}
+                            style={{ height: 750 }}
                         >
                             <Table
                                 dataSource={dataSource}
