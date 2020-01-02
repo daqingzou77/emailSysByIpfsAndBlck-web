@@ -3,10 +3,9 @@ import { Table, Typography, Modal, Form, Row, Col, Card, Icon, Descriptions } fr
 import {
   getNewTrasactions,
   getEmailDeatilByTxId,
-  catchMail
 } from '@/services/home';
+import { getAnnex } from '@/services/annex';
 import { Base64 } from '@/utils/tool';
-import { withReducer } from 'recompose';
 import './style.less';
 
 
@@ -21,8 +20,6 @@ export default class RecentEmails extends Component {
       dataSource: [],
       showModal: false,
       writesArray: [],
-      annexContent: null,
-      annexVisible: false
     };
 
     this.columns = [{
@@ -121,37 +118,15 @@ export default class RecentEmails extends Component {
     })
   };
 
-  handleOnAnnexContent = val => {
+  handleOnAnnexContent = (cid, filename) => {
     this.setState({
       showModal: false
     })
-    catchMail({
-      hashStr: val
-    },
-      data => {
-        this.setState({
-          annexVisible: true,
-          annexContent: data,
-        })
-      },
-      e => console.log('catchMial-error', e.toString())
-    );
-  }
-
-  handleAnnexOk = () => {
-    this.setState({
-      annexVisible: false
-    })
-  }
-
-  handleAnnexCancel = () => {
-    this.setState({
-      annexVisible: false
-    })
+    getAnnex(cid, filename);
   }
 
   render() {
-    const { dataSource, showModal, writesArray, annexContent, annexVisible } = this.state;
+    const { dataSource, showModal, writesArray } = this.state;
     console.log('writesArray', writesArray);
     let mailDetail = '';
     if (writesArray.length > 0) {
@@ -163,10 +138,16 @@ export default class RecentEmails extends Component {
         valueStore.push(mailDetails[i])
       }
       const span = keyStore.length;
+      let filename = '';
+      keyStore.map((item, index) => {
+       if(item === 'file_name') {
+         filename = valueStore[index];
+       }
+     })
       mailDetail = valueStore.map((item, index) => {
         if (item) {
           if (keyStore[index] === 'cid') {
-            return item ? <Descriptions.Item key={index} label={keyStore[index]} span={span}><a style={{ color: '#029EF5' }} onClick={() => this.handleOnAnnexContent(item)}>{item}</a></Descriptions.Item> : null
+            return item ? <Descriptions.Item key={index} label={keyStore[index]} span={span}><a style={{ color: '#029EF5' }} onClick={() => this.handleOnAnnexContent(item, filename)}>{item}</a></Descriptions.Item> : null
           }
           return <Descriptions.Item key={ index} label={keyStore[index]} span={span}>{item}</Descriptions.Item>
         }
@@ -197,15 +178,6 @@ export default class RecentEmails extends Component {
           <Descriptions bordered> 
             {mailDetail}
           </Descriptions> 
-        </Modal>
-
-        <Modal
-          title="附件详情"
-          visible={annexVisible}
-          onOk={this.handleAnnexOk}
-          onCancel={this.handleAnnexCancel}
-        >
-          {annexContent}
         </Modal>
       </div>
     );

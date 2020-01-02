@@ -1,18 +1,21 @@
 import React, { Component } from 'react';
 import { Table, Icon, Modal, Descriptions, notification } from 'antd';
 import PageContent from '@/layouts/page-content';
-import { Operator } from "@/library/components";
-import axios from 'axios';
 import config from '@/commons/config-hoc';
 import {
   getReceivingMails,
   getRecivedMails,
   readMail,
-  catchMail,
 } from '../../services/inbox';
+import { getAnnex } from '../../services/annex'; 
 import { getEmailDeatilByTxId } from '../../services/home';
 import { Base64 } from '@/utils/tool';
+import {
+  Tag,
+  Popconfirm,
+} from 'antd';
 import './index.less';
+
 
 @config({
   path: '/inbox',
@@ -24,11 +27,9 @@ export default class InBox extends Component {
     roleId: void 0,
     ModalShow: false,
     visible: false,
-    annexVisible: false,
     writesArray: [],
     dataSource: [],     // 表格数据
     id: null,
-    annexContent: null,
     inboxDetail: {
       cid: "",
       file_name: "",
@@ -37,7 +38,7 @@ export default class InBox extends Component {
       timestamp: "",
       title: "",
       tx_id: "",
-    }
+    },
   };
 
   columns = [
@@ -65,14 +66,12 @@ export default class InBox extends Component {
       title: '操作', dataIndex: 'operator', key: 'operator', align: 'center',
       render: (value, record) => {
         const { timestamp, noRead } = record;
-        return (<a onClick={() => this.handleOnRead(noRead, timestamp)} style={{ color: record.noRead ? 'red' : '' }}>签收公文</a>)
-        // const items = [
-        //   {
-        //     label: '签收公文',
-        //     onClick: () => this.handleOnRead(noRead, timestamp),
-        //   },
-        // ];
-        // return <Operator items={items} />
+        const text = '确认签收该公文？'
+        return (
+          <Popconfirm placement="top" title={text} onConfirm={() => this.handleOnRead(noRead, timestamp)} okText="确认" cancelText="取消">
+            <Tag>签收公文</Tag>
+          </Popconfirm>
+        )
       },
     }
   ];
@@ -206,50 +205,18 @@ export default class InBox extends Component {
     });
   };
 
-  handleClick = cid => {
+  handleClick = (cid, filename) => {
     this.setState({
       ModalShow: false,
-    })
-    catchMail({
-      hashStr: cid
-    },
-      data => {
-        this.setState({
-          annexVisible: true,
-          annexContent: data,
-        })
-      },
-      e => console.log('catchMial-error', e.toString())
-    );
+    });
+    getAnnex(cid, filename);
   };
 
-  handleOnAnnexContent = val => {
+  handleOnAnnexContent = (cid, filename) => {
     this.setState({
       visible: false,
     })
-    catchMail({
-      hashStr: val
-    },
-      data => {
-        this.setState({
-          annexVisible: true,
-          annexContent: data,
-        })
-      },
-      e => console.log('catchMial-error', e.toString())
-    );
-  }
-
-  handleOnAnnexVisible = () => {
-    this.setState({
-      annexVisible: false
-    })
-  }
-
-  handleOnAnnexCancel = () => {
-    this.setState({
-      annexVisible: false
-    })
+    getAnnex(cid, filename);
   }
 
   render() {
@@ -259,8 +226,6 @@ export default class InBox extends Component {
       ModalShow,
       visible,
       writesArray,
-      annexVisible,
-      annexContent
     } = this.state;
     let mailDetail = '';
     if (writesArray.length > 0) {
@@ -272,9 +237,15 @@ export default class InBox extends Component {
         valueStore.push(mailDetails[i])
       }
       const span = keyStore.length;
+      let filename = '';
+      keyStore.map((item, index) => {
+        if (item === 'file_name') {
+          filename = valueStore[index];
+        }
+      })
       mailDetail = valueStore.map((item, index) => {
         if (keyStore[index] === 'cid') {
-          return item ? <Descriptions.Item label={keyStore[index]} span={span}><a style={{ color: '#029EF5' }} onClick={() => this.handleOnAnnexContent(item)}>{item}</a></Descriptions.Item> : null
+          return item ? <Descriptions.Item label={keyStore[index]} span={span}><a style={{ color: '#029EF5' }} onClick={() => this.handleOnAnnexContent(item, filename)}>{item}</a></Descriptions.Item> : null
         }
         return item ? <Descriptions.Item label={keyStore[index]} span={span}>{item}</Descriptions.Item> : null
       })
@@ -301,7 +272,7 @@ export default class InBox extends Component {
             {inboxDetail.title ? <Descriptions.Item label="主题" span={6}>{inboxDetail.title}</Descriptions.Item> : null}
             {inboxDetail.tx_id ? <Descriptions.Item label="公文哈希" span={6}>{inboxDetail.tx_id}</Descriptions.Item> : null}
             {inboxDetail.file_name ? <Descriptions.Item label="附件名" span={6}>{inboxDetail.file_name}</Descriptions.Item> : null}
-            {inboxDetail.cid ? <Descriptions.Item label="cid" span={6}><a style={{ color: '#029EF5' }} onClick={() => this.handleClick(inboxDetail.cid)}>{inboxDetail.cid}</a></Descriptions.Item> : null}
+            {inboxDetail.cid ? <Descriptions.Item label="cid" span={6}><a style={{ color: '#029EF5' }} onClick={() => this.handleClick(inboxDetail.cid, inboxDetail.file_name)}>{inboxDetail.cid}</a></Descriptions.Item> : null}
           </Descriptions>
         </Modal>
 
@@ -316,14 +287,6 @@ export default class InBox extends Component {
           <Descriptions bordered>
             {mailDetail}
           </Descriptions>
-        </Modal>
-        <Modal
-          title="附件详情"
-          visible={annexVisible}
-          onOk={this.handleOnAnnexVisible}
-          onCancel={this.handleOnAnnexCancel}
-        >
-          {annexContent}
         </Modal>
       </PageContent>
     );

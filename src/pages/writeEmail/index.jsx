@@ -75,7 +75,8 @@ export default class writeEmail extends Component {
   }
 
  // 上传文件回调
- handleOnChange = info => {
+ handleOnChange = (info) => {
+   console.log('info', info)
     const { file } = info;
     let fileList = [...info.fileList];
     fileList = fileList.slice(-1);
@@ -102,45 +103,48 @@ export default class writeEmail extends Component {
       fileList
     })
  }
+
   // 提交邮件
   handleOnSubmit = e => {
-    const { hash, file_name } = this.state;
+    const { hash, file_name, loading } = this.state;
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
         const { receiver, title, text } = values;
         this.setState({ loading: true })
-        setTimeout(()=> {
-          submitEmail({
-            receiver,
-            title,
-            cid: hash,
-            text,
-            file_name,
-          },
-            data => {
-              console.log('submitEmail-data', data);
-              if (data.success) {
-                Modal.success({
-                  title: '发送成功, 链上Hash值:',
-                  content: `${JSON.parse(data.message).TxID}`,
-                })
-              } else {
-                Modal.error({
-                  title: '发送失败',
-                  content: data.message,
-                })
-              }
-              this.props.form.resetFields();
-              this.setState({
-                file: '',
-                fileList: [],
-                loading: false,
-              })
+        if (!loading) {
+          setTimeout(()=> {
+            submitEmail({
+              receiver,
+              title,
+              cid: hash,
+              text,
+              file_name,
             },
-            e => console.log('submitEmail-error', e.toString()),
-          )
-        }, 1000)
+              data => {
+                console.log('submitEmail-data', data);
+                if (data.success) {
+                  Modal.success({
+                    title: '发送成功, 链上Hash值:',
+                    content: `${JSON.parse(data.message).TxID}`,
+                  })
+                } else {
+                  Modal.error({
+                    title: '发送失败',
+                    content: data.message,
+                  })
+                }
+                this.props.form.resetFields();
+                this.setState({
+                  file: '',
+                  fileList: [],
+                  loading: false,
+                })
+              },
+              e => console.log('submitEmail-error', e.toString()),
+            )
+          }, 1000)
+        }
       }
     })
   };
@@ -155,8 +159,11 @@ export default class writeEmail extends Component {
     const { form } = this.props;
     const { dataSource, fileList, loading } = this.state;
     const props = {
-      action: '/add',
+      action: '/api/ipfs/add',
       method: 'POST',
+      data: {
+        filename: fileList.length > 0 ? fileList[0].name : ''
+      },
       headers: {
         authorization: 'authorization-text',
       },
@@ -202,7 +209,7 @@ export default class writeEmail extends Component {
                     fileList={fileList}
                     {...props}
                   >
-                    <Icon type='upload' /> 添加附件至IPFS系统
+                    <Icon type='upload'  /> 添加附件至IPFS系统
                   </Upload>
                 </FormElement>
               </FormRow>

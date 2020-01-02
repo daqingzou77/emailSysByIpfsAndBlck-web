@@ -45,5 +45,5 @@ export const getEmailDeatilByTxId = (data, successCb, failCb) => {
  * 查看邮件附件
  */
 export const catchMail = (data, successCb, failCb) => {
-  post('/add/cat', data, successCb, failCb);
+  post('/api/ipfs/get', data, successCb, failCb);
 }

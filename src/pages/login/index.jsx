@@ -45,7 +45,7 @@ export default class extends Component {
 
     handleSubmit = (e) => {
         const { form } = this.props;
-        e.preventDefault();
+        e.preventDefault(); // 取消事件的默认动作。
         form.validateFields((err, values) => {
             if (!err) {
                 this.setState({ loading: true, errMessage: '' });

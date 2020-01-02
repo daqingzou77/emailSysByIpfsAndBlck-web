@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import { Table, Icon, Modal, Descriptions } from 'antd';
+import { Table, Modal, Descriptions } from 'antd';
 import PageContent from '@/layouts/page-content';
 import config from '@/commons/config-hoc';
 import {
-  catchMail,
   querySent
 } from '@/services/hasSent';
+import { getAnnex } from '@/services/annex'
 import './index.less';
 
 @config({
@@ -20,8 +20,6 @@ export default class HasSent extends Component {
     hasSentDetail: {},
     dataSource: [],     // 表格数据
     id: null,
-    annexVisible: false,
-    annexContent: null,
   };
 
   columns = [
@@ -75,42 +73,18 @@ export default class HasSent extends Component {
     })
   };
 
-  handleShowAnnex = cid => {
+  handleShowAnnex = (cid, filename) => {
     this.setState({
       visible: false,
     })
-    catchMail({
-      hashStr: cid
-    },
-      data => {
-        this.setState({
-          annexVisible: true,
-          annexContent: data,
-        })
-      },
-      e => console.log('catchMial-error', e.toString())
-    );
+    getAnnex(cid, filename);
   };
-
-  handleOnOk = () => {
-    this.setState({
-      annexVisible: false
-    })
-  }
-
-  handleOnCancel = () => {
-    this.setState({
-      annexVisible: false
-    })
-  }
 
   render() {
     const {
       dataSource,
       visible,
       hasSentDetail,
-      annexContent,
-      annexVisible
     } = this.state;
     return (
       <PageContent>
@@ -142,19 +116,11 @@ export default class HasSent extends Component {
             {hasSentDetail.tx_id ? <Descriptions.Item label="公文哈希" span={6}>{hasSentDetail.tx_id}</Descriptions.Item>: null}
             {hasSentDetail.file_name ? <Descriptions.Item label="附件名" span={6}>{hasSentDetail.file_name}</Descriptions.Item>: null}
             {hasSentDetail.cid ? <Descriptions.Item label="cid" span={6}>
-              <a style={{ color: '#029EF5' }} onClick={() => this.handleShowAnnex(hasSentDetail.cid)}>
+              <a style={{ color: '#029EF5' }} onClick={() => this.handleShowAnnex(hasSentDetail.cid, hasSentDetail.file_name)}>
                 {hasSentDetail.cid}
               </a>
             </Descriptions.Item> : null}
           </Descriptions>
-        </Modal>
-        <Modal
-          visible={annexVisible}
-          title="附件详情"
-          onOk={this.handleOnOk}
-          onCancel={this.handleOnCancel}
-        >
-          {annexContent}
         </Modal>
       </PageContent> 
     );

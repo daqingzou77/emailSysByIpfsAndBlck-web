@@ -17,5 +17,5 @@ export const querySent = (data, successCb, failCb) => {
  * @param failCb
  */
 export const catchMail = (data, successCb, failCb) => {
-  post('/add/cat', data, successCb, failCb);
+  post('/api/ipfs/get', data, successCb, failCb);
 }
