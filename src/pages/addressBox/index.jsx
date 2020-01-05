@@ -137,7 +137,7 @@ export default class addressBook extends Component {
                          } else if (!data.success){
                             Modal.error({
                                title: '操作提示',
-                               content: data.message
+                               content: '添加用户失败'
                             })
                          }
                          this.props.form.resetFields();
