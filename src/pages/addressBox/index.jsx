@@ -8,6 +8,9 @@ import {
     FormRow,
     FormElement,
 } from "@/library/components";
+import {
+    uploadAnnext
+} from '../../services/annex'
 import config from '@/commons/config-hoc';
 import RowEdit from './RoleEdit';
 import {
@@ -37,6 +40,10 @@ export default class addressBook extends Component {
         visible: false,     // 添加、修改弹框
         id: null,           // 需要修改的数据id
         loading: false,
+        
+        bytesPerSlice: 1<<20,  // 定义切片的大小为1M
+        hasSendNums: 0,        // 已发送的数量
+        totalSlices: 0           // 总的切片数
     };
 
     columns = [
@@ -144,6 +151,59 @@ export default class addressBook extends Component {
             }
         });
     }
+
+    // 提价上传文件
+    // submitFile() {
+    //     const file = document.getElementById('file').files[0];
+    //     console.log('fil', file)
+    //     const name = file.name;
+    //     uploadAnnext(file, name)
+    //    const { bytesPerSlice , totalSlices } = this.state;
+    //    const file = document.getElementById('file').files[0];
+    //    var start,end;
+    //    const fileName = file.name;
+    //    let index = 0; // 当前片数
+    //    // 向上取整计算切片总数
+    //    totalSlices = Math.ceil(file.size / bytesPerSlice);
+    //    while(index < totalSlices) {
+    //       start = index*bytesPerSlice;
+    //       end = start + bytesPerSlice;
+    //       var slice =file.slice(start,end);//切割文件
+    //       this.uploadFile(slice, index++, totalSlices, fileName)
+    //    }
+    //    this.setState({
+    //     totalSlices,
+    //    })
+    // }
+
+    // // 上传文件
+    // uploadFile(slice, index, totalSlices, fileName) {
+    //    const formDate = new FormData();
+    //    formDate.append("data", slice);
+    //    formDate.append('total', totalSlices)
+    //    formDate.append("filename", fileName);
+    //    formDate.append("index", index);
+    //    const xhr = new XMLHttpRequest();
+    //    xhr.open("post", "http://localhost:3000/local/fileUpload");
+    //    xhr.onreadystatechange = this.uploadCallBack(xhr, slice, index, fileName);
+    //    xhr.send(formDate);
+    // }
+
+    // //  上传回调
+    // uploadCallBack = (xhr, slice, index, fileName) => {
+    //     const { totalSlices } = this.state;
+    //     let hasSendNums = 0; // 已上传的分片数
+    //     if(xhr.readyState === 4) {
+    //         if(xhr.status === 200) {
+    //             hasSendNums++;
+    //             console.log(`第${hasSendNums}片，完成度：${parseInt(hasSendNums/totalSlices*100)}%`);
+    //             if (hasSendNums === totalSlices) {
+    //                 console.log('上传完毕~')
+    //             }
+    //         }
+    //     }
+    // }
+
     render() {
         const {
             collapsed,

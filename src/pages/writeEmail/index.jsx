@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Form, Icon, Card, Row, Col, List, Avatar, Upload, message, Modal } from 'antd';
+import { Form, Icon, Card, Row, Col, List, Avatar, Upload, message, Modal, Button, Tag } from 'antd';
 import {
   FormRow,
   FormElement,
@@ -15,6 +15,7 @@ import {
   getLoginUser
 } from '@/commons/index';
 import InfiniteScroll from 'react-infinite-scroller';
+import './index.less';
 
 @config({
   path: '/writeEmail',
@@ -34,6 +35,7 @@ export default class writeEmail extends Component {
       file_name: '',
       fileList: [],
       dataSource: [],
+      filename: '',
     };
   }
 
@@ -54,10 +56,10 @@ export default class writeEmail extends Component {
       console.log('getAddressBook-data', data);
       const messageArray = JSON.parse(data.message);
       console.log('messageArray', messageArray);
-      const dataArray =[];
+      const dataArray = [];
       messageArray.map(item => {
-        const { user_name } = item.value; 
-        const items = Object.assign({}, {user_name})
+        const { user_name } = item.value;
+        const items = Object.assign({}, { user_name })
         dataArray.push(items)
       })
       this.setState({
@@ -73,18 +75,25 @@ export default class writeEmail extends Component {
       content: value,
     })
   }
+  
+  handleBeforeUpload = (file) => {
+    console.log('file', file);
+    this.setState({
+      filename: file.name,
+      file: file
+    })
+  } 
 
- // 上传文件回调
- handleOnChange = (info) => {
-   console.log('info', info)
+  // 上传文件回调
+  handleOnChange = (info) => {
+    console.log('info', info)
     const { file } = info;
     let fileList = [...info.fileList];
     fileList = fileList.slice(-1);
-    console.log('fileList', fileList);
     if (file.status !== 'uploading') {
       console.log(info.file, info.fileList);
     }
-    if (file.status ==='done') {
+    if (file.status === 'done') {
       Modal.success({
         title: `${file.name}上传成功，文件哈希为：`,
         content: file.response,
@@ -102,7 +111,7 @@ export default class writeEmail extends Component {
     this.setState({
       fileList
     })
- }
+  }
 
   // 提交邮件
   handleOnSubmit = e => {
@@ -113,7 +122,7 @@ export default class writeEmail extends Component {
         const { receiver, title, text } = values;
         this.setState({ loading: true })
         if (!loading) {
-          setTimeout(()=> {
+          setTimeout(() => {
             submitEmail({
               receiver,
               title,
@@ -150,23 +159,25 @@ export default class writeEmail extends Component {
   };
 
   // 通讯录选择成员
-
   handleOnClick = userName => {
     this.props.form.setFieldsValue({ receiver: userName });
   };
 
   render() {
     const { form } = this.props;
-    const { dataSource, fileList, loading } = this.state;
+    const { dataSource, fileList, loading, filename, file } = this.state;
+    console.log('fileList', fileList);
     const props = {
       action: '/api/ipfs/add',
       method: 'POST',
       data: {
-        filename: fileList.length > 0 ? fileList[0].name : ''
+        filename,
+        file
       },
       headers: {
         authorization: 'authorization-text',
       },
+      beforeUpload: this.handleBeforeUpload,
       onChange: this.handleOnChange
     }
     const formElements = {
@@ -203,19 +214,26 @@ export default class writeEmail extends Component {
               </FormRow>
               <FormRow>
                 <FormElement
-                  style={{ marginLeft: 60 }}
+                  label="文件"
+                  field='file'
+                  width='98%'
+                  style={{ marginLeft: 35 }}
                 >
-                  <Upload
+                  <Upload.Dragger name="files"
                     fileList={fileList}
                     {...props}
                   >
-                    <Icon type='upload'  /> 添加附件至IPFS系统
-                  </Upload>
+                    <p className="ant-upload-drag-icon">
+                      <Icon type="inbox" />
+                    </p>
+                    <p className="ant-upload-text">请选择文件上传至IPFS系统</p>
+                  </Upload.Dragger>,
                 </FormElement>
               </FormRow>
               <FormRow>
                 <FormElement
                   {...formElements}
+                  style={{ paddingLeft: 16, marginTop: -20 }}
                   label='正文'
                   rows={12}
                   type='textarea'
@@ -226,7 +244,7 @@ export default class writeEmail extends Component {
             </Form>
             <ToolBar
               onClick={this.handleOnSubmit}
-              style={{ float: 'left', marginLeft: 60 }}
+              style={{ float: 'left', marginLeft: 70 }}
               items={[
                 { type: 'primary', text: '发送文件', loading: loading },
               ]}
@@ -242,10 +260,10 @@ export default class writeEmail extends Component {
           <Col span={5} offset={1} >
             <Card
               title="通讯录"
-              style={{ height: 400, marginTop: 6, marginRight: 16 }}
+              style={{ height: 500, marginTop: 6, marginRight: 16 }}
               hoverable={true}
             >
-              <div style={{ height: 300, overflow: 'auto' }}>
+              <div style={{ height: 400, overflow: 'auto' }}>
                 <InfiniteScroll>
                   <List
                     itemLayout
