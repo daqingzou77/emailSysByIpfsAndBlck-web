@@ -196,50 +196,6 @@ export default class extends Component {
                                 </Form.Item>
                             </div>
                             <div styleName={formItemStyleName}>
-                                <Form.Item
-                                    validateStatus={departError ? 'error' : ''}
-                                    help={departError || ''}
-                                    hasFeedback
-                                >
-                                    {getFieldDecorator('depart', {
-                                        rules: [{
-                                            required: true,
-                                            message: '请输入部门'
-                                        }],
-                                    })(
-                                        <Select 
-                                          placeholder='选择部门单位'
-                                        >
-                                           <Option value='镇府'>镇府</Option>
-                                           <Option value='学校'>学校</Option>
-                                           <Option value='其他'>其他</Option>
-                                        </Select>
-                                    )}
-                                </Form.Item>
-                            </div>
-                            <div styleName={formItemStyleName}>
-                                <Form.Item
-                                    validateStatus={phoneError ? 'error' : ''}
-                                    help={phoneError || ''}
-                                    hasFeedback
-                                >
-                                    {getFieldDecorator('phone', {
-                                        rules: [{
-                                            required: true,
-                                            message: '请输入手机号码'
-                                        }, {
-                                            validator: this.validatePhone
-                                        }
-                                        ],
-                                    })(
-                                        <Input
-                                            placeholder="手机号码"
-                                            prefix={<Icon type='phone' style={{ fontSize: 13 }} />}
-                                        />
-                                    )}
-                                </Form.Item>
-                            </div>
-                            <div styleName={formItemStyleName}>
                                 <Button
                                     styleName="submit-btn"
                                     loading={loading}
